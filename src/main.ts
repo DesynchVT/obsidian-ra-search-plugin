@@ -89,7 +89,7 @@ class SearchModal extends Modal {
 		input.placeholder = "Search by game title or ID";
 
 		const btn = contentEl.createEl("button");
-		btn.textContent = "add game"
+		btn.textContent = "Add game"
 		btn.addEventListener('click', (e) => {
 			const game = input.value;
 			addGame(this.plugin, game, temp);

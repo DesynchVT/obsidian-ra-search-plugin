@@ -25,7 +25,7 @@ export class RaSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('RA Web API Key')
+			.setName('Ra web API key')
 			.addComponent(el => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.raWebApiKey)
 				.onChange(val => {
@@ -33,7 +33,7 @@ export class RaSettingTab extends PluginSettingTab {
 					this.plugin.saveSettings();
 				})
 			);
-		new Setting(containerEl).setName("Properties as Links").setDesc("Save game metadata as internal links in your vault to create connections between them").addToggle(btn => {
+		new Setting(containerEl).setName("Properties as links").setDesc("Save game metadata as internal links in your vault to create connections between them").addToggle(btn => {
 			btn.setValue(this.plugin.settings.propertiesAsLinks).onChange(async (value) => {
 				this.plugin.settings.propertiesAsLinks = value;
 				await this.plugin.saveSettings();

@@ -5,7 +5,7 @@ import RaSearchPlugin from "../main";
 // Not sure how to get the secret without passing the whole class...
 export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGame) {
 	if (!plugin.isTokenSet()) {
-		new Notice("RA Web API Token not set in settings. Cannot search for games.");
+		new Notice("Ra web API token not set in settings. Cannot add games.");
 		return;
 	}
 
@@ -19,7 +19,8 @@ export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGam
 		plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
 			Object.assign(fm, props);
 		});
-	} catch (error: any) {
+	} catch (error) {
+		// @ts-ignore
 		if (error.message && error.message.toLowerCase() === "file already exists.") {
 			new Notice(`${plugin.manifest.name}: "${path}" already exists.`).containerEl.addClass("error-text");
 		}
