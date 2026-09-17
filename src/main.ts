@@ -44,7 +44,7 @@ export default class RaSearchPlugin extends Plugin {
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'add-game',
-			name: 'Add Game',
+			name: 'Add game',
 			callback: async () => new SearchModal(this).open(),
 		});
 

@@ -16,12 +16,12 @@ export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGam
 
 	try {
 		const gameNote = await plugin.app.vault.create(p, "");
-		plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
+		await plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
 			Object.assign(fm, props);
 		});
 	} catch (error) {
 		// @ts-ignore
-		if (error.message && error.message.toLowerCase() === "file already exists.") {
+		if (error?.message && error?.message?.toLowerCase() === "file already exists.") {
 			new Notice(`${plugin.manifest.name}: "${path}" already exists.`).containerEl.addClass("error-text");
 		}
 	}
