@@ -45,7 +45,7 @@ export default class RaSearchPlugin extends Plugin {
 		this.addCommand({
 			id: 'add-game',
 			name: 'Add game',
-			callback: async () => new SearchModal(this).open(),
+			callback: () => new SearchModal(this).open(),
 		});
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
