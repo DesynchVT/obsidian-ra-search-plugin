@@ -21,7 +21,7 @@ export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGam
 		});
 	} catch (error) {
 		// @ts-ignore
-		if (error?.message && error?.message?.toLowerCase() === "file already exists.") {
+		if (error?.message === "File already exists.") {
 			new Notice(`${plugin.manifest.name}: "${path}" already exists.`).containerEl.addClass("error-text");
 		}
 	}
