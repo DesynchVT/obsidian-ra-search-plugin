@@ -28,9 +28,9 @@ export class RaSettingTab extends PluginSettingTab {
 			.setName('Ra web API key')
 			.addComponent(el => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.raWebApiKey)
-				.onChange(val => {
+				.onChange(async (val) => {
 					this.plugin.settings.raWebApiKey = val;
-					this.plugin.saveSettings();
+					await this.plugin.saveSettings();
 				})
 			);
 		new Setting(containerEl).setName("Properties as links").setDesc("Save game metadata as internal links in your vault to create connections between them").addToggle(btn => {

@@ -6,7 +6,7 @@ import RaSearchPlugin from "../main";
 export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGame) {
 	if (!plugin.isTokenSet()) {
 		new Notice("Ra web API token not set in settings. Cannot add games.");
-		return;
+		return null;
 	}
 
 	let p = normalizePath(path);
@@ -25,4 +25,5 @@ export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGam
 			new Notice(`${plugin.manifest.name}: "${path}" already exists.`).containerEl.addClass("error-text");
 		}
 	}
+	return null
 }
