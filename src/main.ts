@@ -90,9 +90,9 @@ class SearchModal extends Modal {
 
 		const btn = contentEl.createEl("button");
 		btn.textContent = "Add game"
-		btn.addEventListener('click', async (_e) => {
+		btn.addEventListener('click', (_e) => {
 			const game = input.value;
-			await addGame(this.plugin, game, temp);
+			addGame(this.plugin, game, temp).catch((err) => console.error(err));
 			this.close();
 		})
 	}
