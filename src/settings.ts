@@ -1,18 +1,20 @@
-import { App, PluginSettingTab, Setting } from 'obsidian';
-import MyPlugin from './main';
+import { App, PluginSettingTab, Setting, SecretComponent } from 'obsidian';
+import RaSearchPlugin from './main';
 
-export interface MyPluginSettings {
-	mySetting: string;
+export interface RaPluginSettings {
+	raWebApiKey: string;
+	propertiesAsLinks: boolean;
 }
 
-export const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default',
+export const DEFAULT_SETTINGS: RaPluginSettings = {
+	raWebApiKey: '',
+	propertiesAsLinks: true,
 };
 
-export class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
+export class RaSettingTab extends PluginSettingTab {
+	plugin: RaSearchPlugin;
 
-	constructor(app: App, plugin: MyPlugin) {
+	constructor(app: App, plugin: RaSearchPlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
 	}
@@ -23,16 +25,19 @@ export class SampleSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Settings #1')
-			.setDesc("It's a secret")
-			.addText((text) =>
-				text
-					.setPlaceholder('Enter your secret')
-					.setValue(this.plugin.settings.mySetting)
-					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
-						await this.plugin.saveSettings();
-					}),
+			.setName('RA Web API Key')
+			.addComponent(el => new SecretComponent(this.app, el)
+				.setValue(this.plugin.settings.raWebApiKey)
+				.onChange(val => {
+					this.plugin.settings.raWebApiKey = val;
+					this.plugin.saveSettings();
+				})
 			);
+		new Setting(containerEl).setName("Properties as Links").setDesc("Save game metadata as internal links in your vault to create connections between them").addToggle(btn => {
+			btn.setValue(this.plugin.settings.propertiesAsLinks).onChange(async (value) => {
+				this.plugin.settings.propertiesAsLinks = value;
+				await this.plugin.saveSettings();
+			})
+		})
 	}
 }

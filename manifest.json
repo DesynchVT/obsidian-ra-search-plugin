@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-ra-search-plugin",
+	"name": "RA Search",
 	"version": "1.0.0",
 	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Create game notes and automatically insert metadata of titles with RetroAchievements support",
+	"author": "DesynchVT",
+	"authorUrl": "https://retroachievements.org/user/Desynch",
+	"fundingUrl": "",
 	"isDesktopOnly": false
 }
