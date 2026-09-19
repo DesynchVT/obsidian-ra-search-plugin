@@ -20,10 +20,7 @@ export default class RaSearchPlugin extends Plugin {
 		await this.loadSettings();
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RaSettingTab(this.app, this));
-		this.raAuth = buildAuthorization({
-			username: "Desynch",
-			webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
-		})
+		this.rebuildRaAuth();
 
 		// This creates an icon in the left ribbon.
 		this.addRibbonIcon("dice", "Add RA set", (_evt: MouseEvent) => {
@@ -60,6 +57,12 @@ export default class RaSearchPlugin extends Plugin {
 
 	isTokenSet() {
 		return this.app.secretStorage.getSecret(this.settings.raWebApiKey) !== null;
+	}
+	rebuildRaAuth() {
+		this.raAuth = buildAuthorization({
+			username: this.settings.raUsername,
+			webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
+		});
 	}
 	onunload() { }
 }

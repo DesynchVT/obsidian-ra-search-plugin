@@ -36,6 +36,7 @@ export class RaSettingTab extends PluginSettingTab {
 				text.setValue(this.plugin.settings.raUsername).onChange(async (val) => {
 					this.plugin.settings.raUsername = val;
 					await this.plugin.saveSettings();
+					this.plugin.rebuildRaAuth();
 				})
 			});
 		new Setting(containerEl)
@@ -46,6 +47,7 @@ export class RaSettingTab extends PluginSettingTab {
 				.onChange(async (val) => {
 					this.plugin.settings.raWebApiKey = val;
 					await this.plugin.saveSettings();
+					this.plugin.rebuildRaAuth();
 				})
 			);
 		new Setting(containerEl)
