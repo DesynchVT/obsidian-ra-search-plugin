@@ -42,5 +42,4 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 			console.error(error)
 		}
 	}
-	return null
 }
