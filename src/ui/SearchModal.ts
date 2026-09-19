@@ -18,23 +18,28 @@ export class SearchModal extends Modal {
 		const input = contentEl.createEl("input");
 		input.name = "raGame";
 		input.id = "raGame";
-		input.placeholder = "Search by game ID";
+		input.placeholder = "Search by game ID or URL";
 
 		const btn = contentEl.createEl("button");
 		btn.textContent = "Add game";
 		btn.addEventListener("click", (_e) => {
-			if (!this.isInputValid(input.value)) {
+			const inputCheck = this.isInputValid(input.value);
+			if (!inputCheck.success) {
 				// TODO: HTML to show the user error
+				new Notice(inputCheck.msg).containerEl.addClass("error-text")
 				return;
 			}
-			getSpecificGame(this.plugin, +input.value).then((game) => {
+			if (!inputCheck.id) {
+				return;
+			}
+			getSpecificGame(this.plugin, inputCheck.id).then((game) => {
 				if (!game) {
-					new Notice(`Error importing game with ID "${input.value}." It might not exist.`);
+					new Notice(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
 					return;
 				}
 				addGame(this.plugin, game).catch(e => {
 					console.error(e);
-					new Notice(`Error importing game with ID "${input.value}."`).containerEl.addClass("error-text");
+					new Notice(`Error importing game with ID "${inputCheck.id}."`).containerEl.addClass("error-text");
 					return;
 				})
 				new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
@@ -50,15 +55,33 @@ export class SearchModal extends Modal {
 		contentEl.empty();
 	}
 
-	isInputValid(inputVal: string) {
+	isInputValid(inputVal: string): { success: boolean, msg: string, id?: number } {
+		const originalInput = inputVal;
+
 		if (inputVal === "" || inputVal === null || inputVal === undefined) {
 			new Notice(inputVal).containerEl.addClass("error-text");
-			return false;
-		} else if (!isNumeric(inputVal) || +inputVal < 0) {
-			new Notice(`${inputVal} is not a valid RA game id.`).containerEl.addClass("error-text");
-			return false;
+			return {
+				success: false,
+				msg: "Input must not be empty."
+			};
 		}
-		return true;
+		// check is full url
+		if (inputVal.includes("retroachievements.org")) {
+			const id = inputVal.substring(inputVal.lastIndexOf("/") + 1);
+			inputVal = id;
+		}
+		if (!isNumeric(inputVal) || +inputVal < 0) {
+			// check is just ID
+			return {
+				success: false,
+				msg: `${originalInput} is not a valid RA game id.`
+			}
+		}
+		return {
+			success: true,
+			msg: "",
+			id: +inputVal,
+		};
 	}
 }
 
