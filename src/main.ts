@@ -37,7 +37,7 @@ export default class RaSearchPlugin extends Plugin {
 			name: 'Auto import RA library',
 			callback: async () => {
 				if (!this.isTokenSet()) {
-					new Notice("Ra web API token not set in settings. Cannot auto import games.");
+					new Notice("RA web API token not set in settings. Cannot auto import games.");
 					return;
 				}
 
@@ -51,7 +51,7 @@ export default class RaSearchPlugin extends Plugin {
 			name: 'Add game',
 			callback: () => {
 				if (!this.isTokenSet()) {
-					new Notice("Ra web API token not set in settings. Cannot auto import games.");
+					new Notice("RA web API token not set in settings. Cannot auto import games.");
 					return;
 				}
 				new SearchModal(this).open();
