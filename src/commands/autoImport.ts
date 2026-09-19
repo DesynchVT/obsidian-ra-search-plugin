@@ -1,11 +1,31 @@
 import { addGame } from "../commands";
 import RaSearchPlugin from "../main";
 import { ensureFolderStructure, gameToFileName, noteExists } from "../utils";
-import { getGameBoxartUrl, getAllRaGames } from ".";
+import { getGameBoxartUrl, getAllRaGames } from "../ra";
 import { FetchedRaGame } from "../types";
 import { Notice } from "obsidian";
 
-export const autoImport = async (plugin: RaSearchPlugin) => {
+export const runAutoImport = async (plugin: RaSearchPlugin) => {
+	if (!plugin.isTokenSet()) {
+		new Notice("RA web API token not set in settings. Cannot auto import games.");
+		return;
+	}
+
+	try {
+		const amountImported = await _autoImport(plugin);
+		if (amountImported === 0) {
+			new Notice(`${plugin.manifest.name}: Nothing to import!`);
+			return
+		}
+		new Notice(`${plugin.manifest.name}: Auto import completed!`);
+	} catch (error) {
+		console.error(error);
+		new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+	}
+
+}
+
+const _autoImport = async (plugin: RaSearchPlugin) => {
 	await ensureFolderStructure(plugin.app, plugin.settings.raGamesPath);
 	let games = await getAllRaGames(plugin.raAuth, plugin.settings.raUsername);
 	const initialAmount = games.length;
@@ -14,20 +34,22 @@ export const autoImport = async (plugin: RaSearchPlugin) => {
 	}
 	games = await filterExistingNotes(plugin, games);
 	const filteredAmount = initialAmount - games.length;
-	let msg = `${plugin.manifest.name}: Skipping ${filteredAmount} sets. ${games.length} left to import.`;
 	if (games.length <= 0) {
-		msg = `${plugin.manifest.name}: Nothing to import!`;
+		return 0;
 	}
 
-	new Notice(msg);
+	new Notice(`${plugin.manifest.name}: Importing ${games.length} of ${initialAmount} sets`);
 
-	for (const game of games) {
-		const g = await getGameBoxartUrl(plugin.raAuth, [game]);
-		if (g[0]) {
-			await addGame(plugin, g[0]);
+	for (const [i, game] of games.entries()) {
+		const [g] = await getGameBoxartUrl(plugin.raAuth, [game]);
+		if (g) {
+			await addGame(plugin, g);
 		}
-		await sleep(5000);
+		if (i + 1 != games.length) {
+			await sleep(5000);
+		}
 	}
+	return filteredAmount;
 }
 
 const filterExistingNotes = async (plugin: RaSearchPlugin, games: FetchedRaGame[]) => {

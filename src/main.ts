@@ -8,8 +8,7 @@ import {
 	RaSettingTab,
 } from './settings';
 import { type AuthObject, buildAuthorization } from '@retroachievements/api';
-import { SearchModal } from './ui';
-import { autoImport } from './ra';
+import { runAddGameById, runAutoImport } from './commands';
 
 export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
@@ -28,39 +27,21 @@ export default class RaSearchPlugin extends Plugin {
 
 		// This creates an icon in the left ribbon.
 		this.addRibbonIcon("dice", "Add RA set", (_evt: MouseEvent) => {
-			new Notice("NYI");
+			runAddGameById(this);
 		});
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'auto-import',
 			name: 'Auto import RA library',
-			callback: async () => {
-				if (!this.isTokenSet()) {
-					new Notice("RA web API token not set in settings. Cannot auto import games.");
-					return;
-				}
-
-				await autoImport(this);
-				new Notice(`${this.manifest.name}: Auto import completed!`);
-			},
+			callback: async () => await runAutoImport(this),
 		});
 
 		this.addCommand({
 			id: 'add-game-by-id',
 			name: 'Add game',
-			callback: () => {
-				if (!this.isTokenSet()) {
-					new Notice("RA web API token not set in settings. Cannot auto import games.");
-					return;
-				}
-				new SearchModal(this).open();
-			},
+			callback: async () => await runAddGameById(this),
 		});
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		// this.registerInterval(
-		// 	window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000),
-		// );
 	}
 
 	async loadSettings() {
