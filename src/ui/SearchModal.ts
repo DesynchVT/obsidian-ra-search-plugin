@@ -1,4 +1,4 @@
-import { Modal, Notice } from "obsidian";
+import { Modal, Notice, Setting } from "obsidian";
 import RaSearchPlugin from "../main";
 import { isNumeric } from "../utils";
 import { getSpecificGame } from "../ra";
@@ -6,45 +6,57 @@ import { addGame } from "../commands";
 
 export class SearchModal extends Modal {
 	private readonly plugin: RaSearchPlugin;
+	private errorEl: HTMLElement | null = null;
 	constructor(plugin: RaSearchPlugin) {
 		super(plugin.app);
 		this.plugin = plugin;
 	}
 
 	onOpen() {
-		const { contentEl } = this;
-		contentEl.createEl("h1").textContent = "Add game";
+		this.titleEl.setText("Add game");
 
-		const input = contentEl.createEl("input");
-		input.name = "raGame";
-		input.id = "raGame";
-		input.placeholder = "Search by game ID or URL";
+		const form = this.contentEl.createEl("form");
+		this.errorEl = form.createDiv({ cls: "error-text" });
 
-		const btn = contentEl.createEl("button");
-		btn.textContent = "Add game";
-		btn.addEventListener("click", (_e) => {
-			void this.handleOnAddGame(input.value);
+		let inputValue = "";
+		new Setting(form)
+			.setName("Game ID or URL")
+			.setDesc("Paste a RetroAchievements game ID or URL.")
+			.addText((text) => {
+				text.setPlaceholder("retroachievements.org/game/1")
+					.onChange((v) => { inputValue = v; });
+			})
+			.addButton((btn) => {
+				btn.setButtonText("Add game").setCta()
+			});
+
+		form.addEventListener("submit", (e) => {
+			e.preventDefault();
+			void this.handleOnAddGame(inputValue);
 		});
 	}
 
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+		this.errorEl = null;
 	}
 
 	private async handleOnAddGame(inputVal: string) {
+		this.errorEl?.empty();
 		const inputCheck = this.isInputValid(inputVal);
 		if (!inputCheck.success) {
-			// TODO: HTML to show the user error
-			new Notice(inputCheck.msg).containerEl.addClass("error-text")
+			this.errorEl?.setText(inputCheck.msg);
 			return;
 		}
+		// Should never be true, but ts complains otherwise
 		if (!inputCheck.id) {
 			return;
 		}
+
 		const game = await getSpecificGame(this.plugin, inputCheck.id)
 		if (!game) {
-			new Notice(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
+			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
 			return;
 		}
 
@@ -56,7 +68,7 @@ export class SearchModal extends Modal {
 			}
 		} catch (error) {
 			console.error(error);
-			new Notice(`Error importing game with ID "${inputCheck.id}."`).containerEl.addClass("error-text");
+			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}."`);
 			return;
 		}
 		new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
@@ -68,7 +80,6 @@ export class SearchModal extends Modal {
 		const originalInput = inputVal;
 
 		if (inputVal === "" || inputVal === null || inputVal === undefined) {
-			new Notice(inputVal).containerEl.addClass("error-text");
 			return {
 				success: false,
 				msg: "Input must not be empty."
