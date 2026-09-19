@@ -18,7 +18,7 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 			return
 		}
 		new Notice(`${plugin.manifest.name}: Auto import completed!`);
-	} catch (error) {
+	} catch (error: any) {
 		console.error(error);
 		new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
 	}
