@@ -29,6 +29,7 @@ export const getAllRaGames = async (raAuth: AuthObject, raUsername: string) => {
 			break;
 		}
 		offset = gamesList.length;
+		await sleep(2000);
 	}
 	return gamesList;
 }
