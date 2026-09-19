@@ -24,9 +24,7 @@ export default class RaSearchPlugin extends Plugin {
 
 		// This creates an icon in the left ribbon.
 		this.addRibbonIcon("dice", "Add RA set", (_evt: MouseEvent) => {
-			runAddGameById(this).catch((error) => {
-				console.error(error);
-			});
+			void this.handleRibbonClick();
 		});
 
 		// This adds a simple command that can be triggered anywhere
@@ -64,6 +62,11 @@ export default class RaSearchPlugin extends Plugin {
 			webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
 		});
 	}
+
+	private async handleRibbonClick() {
+		await runAddGameById(this);
+	}
+
 	onunload() { }
 }
 

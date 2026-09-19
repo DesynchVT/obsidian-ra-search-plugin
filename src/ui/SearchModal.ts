@@ -23,36 +23,45 @@ export class SearchModal extends Modal {
 		const btn = contentEl.createEl("button");
 		btn.textContent = "Add game";
 		btn.addEventListener("click", (_e) => {
-			const inputCheck = this.isInputValid(input.value);
-			if (!inputCheck.success) {
-				// TODO: HTML to show the user error
-				new Notice(inputCheck.msg).containerEl.addClass("error-text")
-				return;
-			}
-			if (!inputCheck.id) {
-				return;
-			}
-			getSpecificGame(this.plugin, inputCheck.id).then((game) => {
-				if (!game) {
-					new Notice(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
-					return;
-				}
-				addGame(this.plugin, game).catch(e => {
-					console.error(e);
-					new Notice(`Error importing game with ID "${inputCheck.id}."`).containerEl.addClass("error-text");
-					return;
-				})
-				new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
-
-			}).catch(err => {
-				console.error(err)
-			});
+			void this.handleOnAddGame(input.value);
 		});
 	}
 
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+	}
+
+	private async handleOnAddGame(inputVal: string) {
+		const inputCheck = this.isInputValid(inputVal);
+		if (!inputCheck.success) {
+			// TODO: HTML to show the user error
+			new Notice(inputCheck.msg).containerEl.addClass("error-text")
+			return;
+		}
+		if (!inputCheck.id) {
+			return;
+		}
+		const game = await getSpecificGame(this.plugin, inputCheck.id)
+		if (!game) {
+			new Notice(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
+			return;
+		}
+
+		try {
+			const addGameSuccess = await addGame(this.plugin, game);
+			if (!addGameSuccess) {
+				this.close();
+				return;
+			}
+		} catch (error) {
+			console.error(error);
+			new Notice(`Error importing game with ID "${inputCheck.id}."`).containerEl.addClass("error-text");
+			return;
+		}
+		new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
+		this.close();
+
 	}
 
 	isInputValid(inputVal: string): { success: boolean, msg: string, id?: number } {
