@@ -1,5 +1,4 @@
 import {
-	Modal,
 	Notice,
 	Plugin,
 } from 'obsidian';
@@ -8,46 +7,56 @@ import {
 	RaPluginSettings,
 	RaSettingTab,
 } from './settings';
-import { addGame } from "./commands";
-import { RaGame } from './types';
-import { raUserUrl } from './ra/utils';
-
-const temp: RaGame = {
-	title: "Ratchet & Clank",
-	console: "PS2",
-	genres: ["action", "platformer"],
-	status: "mastered",
-	raDevelopers: [`[Desynch](${raUserUrl("Desynch")})`],
-	developers: ["Insomniac Games"],
-	publishers: ["someone"],
-	setUrl: "",
-	coverUrl: "",
-}
-
+import { type AuthObject, buildAuthorization } from '@retroachievements/api';
+import { SearchModal } from './ui';
+import { autoImport } from './ra';
 
 export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
 	rootPath!: string;
+	raAuth!: AuthObject;
 
 	async onload() {
 		this.rootPath = this.app.vault.getRoot().path;
 		await this.loadSettings();
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RaSettingTab(this.app, this));
+		this.raAuth = buildAuthorization({
+			username: "Desynch",
+			webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
+		})
 
 		// This creates an icon in the left ribbon.
-		this.addRibbonIcon("dice", 'Sample', (_evt: MouseEvent) => {
-			const raToken = this.app.secretStorage.getSecret(this.settings.raWebApiKey) || "Not found";
-			new Notice(raToken);
+		this.addRibbonIcon("dice", "Add RA set", (_evt: MouseEvent) => {
+			new Notice("NYI");
 		});
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
-			id: 'add-game',
-			name: 'Add game',
-			callback: () => new SearchModal(this).open(),
+			id: 'auto-import',
+			name: 'Auto import RA library',
+			callback: async () => {
+				if (!this.isTokenSet()) {
+					new Notice("Ra web API token not set in settings. Cannot auto import games.");
+					return;
+				}
+
+				await autoImport(this);
+				new Notice(`${this.manifest.name}: Auto import completed!`);
+			},
 		});
 
+		this.addCommand({
+			id: 'add-game-by-id',
+			name: 'Add game',
+			callback: () => {
+				if (!this.isTokenSet()) {
+					new Notice("Ra web API token not set in settings. Cannot auto import games.");
+					return;
+				}
+				new SearchModal(this).open();
+			},
+		});
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		// this.registerInterval(
 		// 	window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000),
@@ -72,33 +81,3 @@ export default class RaSearchPlugin extends Plugin {
 	onunload() { }
 }
 
-class SearchModal extends Modal {
-	private readonly plugin: RaSearchPlugin;
-	constructor(plugin: RaSearchPlugin) {
-		super(plugin.app);
-		this.plugin = plugin;
-	}
-
-	onOpen() {
-		const { contentEl } = this;
-		contentEl.createEl("h1").textContent = "Add game";
-
-		const input = contentEl.createEl("input");
-		input.name = "raGame";
-		input.id = "raGame";
-		input.placeholder = "Search by game title or ID";
-
-		const btn = contentEl.createEl("button");
-		btn.textContent = "Add game"
-		btn.addEventListener('click', (_e) => {
-			const game = input.value;
-			addGame(this.plugin, game, temp).catch((err) => console.error(err));
-			this.close();
-		})
-	}
-
-	onClose() {
-		const { contentEl } = this;
-		contentEl.empty();
-	}
-}

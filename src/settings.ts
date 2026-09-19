@@ -4,11 +4,17 @@ import RaSearchPlugin from './main';
 export interface RaPluginSettings {
 	raWebApiKey: string;
 	propertiesAsLinks: boolean;
+	raUsername: string;
+	raGamesPath: string;
+	includeSubsets: boolean;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
 	raWebApiKey: '',
 	propertiesAsLinks: true,
+	raUsername: "Desynch",
+	raGamesPath: "RetroAchievements/library",
+	includeSubsets: false,
 };
 
 export class RaSettingTab extends PluginSettingTab {
@@ -38,6 +44,15 @@ export class RaSettingTab extends PluginSettingTab {
 				this.plugin.settings.propertiesAsLinks = value;
 				await this.plugin.saveSettings();
 			})
-		})
+		});
+		new Setting(containerEl)
+			.setName("Ra username")
+			.setDesc("Your username on retroachievements.org")
+			.addText((text) => {
+				text.setValue(this.plugin.settings.raUsername).onChange(async (val) => {
+					this.plugin.settings.raUsername = val;
+					await this.plugin.saveSettings();
+				})
+			})
 	}
 }

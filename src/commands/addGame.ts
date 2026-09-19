@@ -1,28 +1,45 @@
-import { normalizePath, Notice } from "obsidian";
-import { RaGame } from "../types";
-import RaSearchPlugin from "../main";
+import { Notice } from "obsidian";
+import type { RaGame, RaMetaData } from "../types";
+import type RaSearchPlugin from "../main";
+import { ensureFolderStructure, gameToFileName, toInternalLink } from "../utils";
 
-// Not sure how to get the secret without passing the whole class...
-export async function addGame(plugin: RaSearchPlugin, path: string, props: RaGame) {
-	if (!plugin.isTokenSet()) {
-		new Notice("Ra web API token not set in settings. Cannot add games.");
-		return null;
-	}
-
-	let p = normalizePath(path);
-	if (!p.endsWith(".md")) {
-		p = p + ".md";
-	}
+export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
+	let notePath = gameToFileName(plugin, gameData.title, gameData.console);
+	await ensureFolderStructure(plugin.app, notePath);
 
 	try {
-		const gameNote = await plugin.app.vault.create(p, "");
+		const gameNote = await plugin.app.vault.create(notePath, "");
+
 		await plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
-			Object.assign(fm, props);
+			let gameObj: RaMetaData = {
+				title: gameData.title,
+				console: gameData.console,
+				genres: gameData.genres,
+				status: gameData.status,
+				raDevelopers: [],
+				developers: gameData.developers,
+				publishers: gameData.publishers,
+				setUrl: gameData.setUrl,
+				coverUrl: gameData.coverUrl,
+				category: "RetroAchievements",
+			}
+			if (plugin.settings.propertiesAsLinks) {
+				gameObj = {
+					...gameObj,
+					console: toInternalLink(gameData.console) as string,
+					genres: toInternalLink(gameData.genres) as string[],
+					developers: toInternalLink(gameData.developers) as string[],
+					publishers: toInternalLink(gameData.publishers) as string[],
+				}
+			}
+			Object.assign(fm, gameObj);
 		});
 	} catch (error) {
 		// @ts-ignore
 		if (error?.message === "File already exists.") {
-			new Notice(`${plugin.manifest.name}: "${path}" already exists.`).containerEl.addClass("error-text");
+			new Notice(`${plugin.manifest.name}: "${notePath}" already exists.`).containerEl.addClass("error-text");
+		} else {
+			console.error(error)
 		}
 	}
 	return null
