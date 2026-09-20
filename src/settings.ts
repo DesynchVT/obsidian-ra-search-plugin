@@ -7,6 +7,7 @@ export interface RaPluginSettings {
 	raUsername: string;
 	raGamesPath: string;
 	includeSubsets: boolean;
+	displayRibbonIcon: boolean;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: RaPluginSettings = {
 	raUsername: "",
 	raGamesPath: "RetroAchievements/library",
 	includeSubsets: false,
+	displayRibbonIcon: true,
 };
 
 export class RaSettingTab extends PluginSettingTab {
@@ -39,9 +41,16 @@ export class RaSettingTab extends PluginSettingTab {
 					this.plugin.rebuildRaAuth();
 				})
 			});
+		const raApiKeyDesc = document.createDocumentFragment();
+		raApiKeyDesc.appendText("Your personal API key from retroachievements.org. Found under your ");
+		raApiKeyDesc.createEl("a", {
+			text: "RA user settings",
+			href: "https://retroachievements.org/settings?tab=applications",
+		});
+		raApiKeyDesc.appendText(".");
 		new Setting(containerEl)
 			.setName('RA web API key')
-			.setDesc("Your personal API key from retroachievements.org.\nFound under settings.")
+			.setDesc(raApiKeyDesc)
 			.addComponent(el => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.raWebApiKey)
 				.onChange(async (val) => {
@@ -50,6 +59,7 @@ export class RaSettingTab extends PluginSettingTab {
 					this.plugin.rebuildRaAuth();
 				})
 			);
+
 		new Setting(containerEl)
 			.setName("Properties as links")
 			.setDesc(`Save game metadata as internal links in your vault to create connections between them.\nDefault: ${DEFAULT_SETTINGS.propertiesAsLinks}`)
@@ -59,6 +69,7 @@ export class RaSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			});
+
 		new Setting(containerEl)
 			.setName("Include subsets")
 			.setDesc(`Whether auto import includes subsets or not.\nDefault: ${DEFAULT_SETTINGS.includeSubsets}`)
@@ -68,6 +79,7 @@ export class RaSettingTab extends PluginSettingTab {
 					await this.plugin.saveSettings();
 				})
 			});
+
 		new Setting(containerEl)
 			.setName("Game note directory")
 			.setDesc(`The path imported RA games are imported to.\nDefault: ${DEFAULT_SETTINGS.raGamesPath}`)
@@ -75,6 +87,17 @@ export class RaSettingTab extends PluginSettingTab {
 				text.setValue(this.plugin.settings.raGamesPath).onChange(async (val) => {
 					this.plugin.settings.raGamesPath = val;
 					await this.plugin.saveSettings();
+				});
+				text.setPlaceholder(DEFAULT_SETTINGS.raGamesPath);
+			});
+
+		new Setting(containerEl)
+			.setName("Show RA logo in ribbon menu")
+			.addToggle(btn => {
+				btn.setValue(this.plugin.settings.displayRibbonIcon).onChange(async (value) => {
+					this.plugin.settings.displayRibbonIcon = value;
+					await this.plugin.saveSettings();
+					this.plugin.toggleRibbonIcon();
 				})
 			});
 	}

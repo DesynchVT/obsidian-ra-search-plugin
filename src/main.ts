@@ -14,6 +14,7 @@ export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
 	rootPath!: string;
 	raAuth!: AuthObject;
+	private ribbonEl!: HTMLElement | null;
 
 	async onload() {
 		registerRaIcon();
@@ -22,11 +23,7 @@ export default class RaSearchPlugin extends Plugin {
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RaSettingTab(this.app, this));
 		this.rebuildRaAuth();
-
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon(RA_LOGO_ICON_ID, "Add RA achievement set", (_evt: MouseEvent) => {
-			void this.handleRibbonClick();
-		});
+		this.toggleRibbonIcon();
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -40,6 +37,14 @@ export default class RaSearchPlugin extends Plugin {
 			name: 'Add game',
 			callback: async () => await runAddGameById(this),
 		});
+	}
+	toggleRibbonIcon() {
+		if (this.settings.displayRibbonIcon && !this.ribbonEl) {
+			this.ribbonEl = this.addRibbonIcon(RA_LOGO_ICON_ID, "Add RA achievement set", (_evt: MouseEvent) => void this.handleRibbonClick());
+		} else {
+			this.ribbonEl?.remove();
+			this.ribbonEl = null;
+		}
 	}
 
 	async loadSettings() {
@@ -58,10 +63,12 @@ export default class RaSearchPlugin extends Plugin {
 		return this.app.secretStorage.getSecret(this.settings.raWebApiKey) !== null;
 	}
 	rebuildRaAuth() {
-		this.raAuth = buildAuthorization({
-			username: this.settings.raUsername,
-			webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
-		});
+		if (this.settings.raUsername && this.settings.raWebApiKey) {
+			this.raAuth = buildAuthorization({
+				username: this.settings.raUsername,
+				webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
+			});
+		}
 	}
 
 	private async handleRibbonClick() {
