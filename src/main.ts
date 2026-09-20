@@ -1,5 +1,4 @@
 import {
-	Notice,
 	Plugin,
 } from 'obsidian';
 import {
@@ -9,6 +8,7 @@ import {
 } from './settings';
 import { type AuthObject, buildAuthorization } from '@retroachievements/api';
 import { runAddGameById, runAutoImport } from './commands';
+import { RA_LOGO_ICON_ID, registerRaIcon } from './icons';
 
 export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
@@ -16,6 +16,7 @@ export default class RaSearchPlugin extends Plugin {
 	raAuth!: AuthObject;
 
 	async onload() {
+		registerRaIcon();
 		this.rootPath = this.app.vault.getRoot().path;
 		await this.loadSettings();
 		// This adds a settings tab so the user can configure various aspects of the plugin
@@ -23,7 +24,7 @@ export default class RaSearchPlugin extends Plugin {
 		this.rebuildRaAuth();
 
 		// This creates an icon in the left ribbon.
-		this.addRibbonIcon("dice", "Add RA set", (_evt: MouseEvent) => {
+		this.addRibbonIcon(RA_LOGO_ICON_ID, "Add RA achievement set", (_evt: MouseEvent) => {
 			void this.handleRibbonClick();
 		});
 
