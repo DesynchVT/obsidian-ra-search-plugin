@@ -1,5 +1,6 @@
 import { App, normalizePath, TFile, TFolder } from "obsidian";
 import RaSearchPlugin from "./main";
+import { MissingCredentialsModal } from "./ui/MissingCredentialsModal";
 
 export const toInternalLink = (s: string | string[]) => {
 	if (Array.isArray(s)) {
@@ -46,4 +47,12 @@ export function isNumeric(str: string) {
 
 export const stringToArray = (str: string) => {
 	return str?.split(", ").map(x => x.trim()) || [];
+}
+
+export function requireCredentials(plugin: RaSearchPlugin): boolean {
+	if (!plugin.settings.raUsername || !plugin.isTokenSet()) {
+		new MissingCredentialsModal(plugin).open();
+		return false;
+	}
+	return true;
 }

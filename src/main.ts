@@ -60,7 +60,8 @@ export default class RaSearchPlugin extends Plugin {
 	}
 
 	isTokenSet() {
-		return this.app.secretStorage.getSecret(this.settings.raWebApiKey) !== null;
+		const token = this.app.secretStorage.getSecret(this.settings.raWebApiKey);
+		return token !== null && token !== "" && token !== undefined;
 	}
 	rebuildRaAuth() {
 		if (this.settings.raUsername && this.settings.raWebApiKey) {

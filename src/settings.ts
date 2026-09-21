@@ -36,7 +36,7 @@ export class RaSettingTab extends PluginSettingTab {
 			.setDesc("Your username on retroachievements.org")
 			.addText((text) => {
 				text.setValue(this.plugin.settings.raUsername).onChange(async (val) => {
-					this.plugin.settings.raUsername = val;
+					this.plugin.settings.raUsername = val?.trim();
 					await this.plugin.saveSettings();
 					this.plugin.rebuildRaAuth();
 				})
@@ -54,7 +54,7 @@ export class RaSettingTab extends PluginSettingTab {
 			.addComponent(el => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.raWebApiKey)
 				.onChange(async (val) => {
-					this.plugin.settings.raWebApiKey = val;
+					this.plugin.settings.raWebApiKey = val?.trim();
 					await this.plugin.saveSettings();
 					this.plugin.rebuildRaAuth();
 				})
@@ -85,7 +85,7 @@ export class RaSettingTab extends PluginSettingTab {
 			.setDesc(`The path imported RA games are imported to.\nDefault: ${DEFAULT_SETTINGS.raGamesPath}`)
 			.addText((text) => {
 				text.setValue(this.plugin.settings.raGamesPath).onChange(async (val) => {
-					this.plugin.settings.raGamesPath = val;
+					this.plugin.settings.raGamesPath = val.trim();
 					await this.plugin.saveSettings();
 				});
 				text.setPlaceholder(DEFAULT_SETTINGS.raGamesPath);

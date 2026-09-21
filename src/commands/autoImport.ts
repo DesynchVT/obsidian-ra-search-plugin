@@ -1,13 +1,12 @@
 import { addGame } from "../commands";
 import RaSearchPlugin from "../main";
-import { ensureFolderStructure, gameToFileName, noteExists } from "../utils";
+import { ensureFolderStructure, gameToFileName, noteExists, requireCredentials } from "../utils";
 import { getGameBoxartUrl, getAllRaGames } from "../ra";
 import { FetchedRaGame } from "../types";
 import { Notice } from "obsidian";
 
 export const runAutoImport = async (plugin: RaSearchPlugin) => {
-	if (!plugin.isTokenSet()) {
-		new Notice("RA web API token not set in settings. Cannot auto import games.");
+	if (!requireCredentials(plugin)) {
 		return;
 	}
 
