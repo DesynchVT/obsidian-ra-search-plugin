@@ -21,8 +21,8 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 
 	const fetchedGame: FetchedRaGame = {
 		console: gameData.consoleName,
-		gameId: gameData.id,
-		setUrl: raGameUrl(gameData.id),
+		gameId: gameId,
+		setUrl: raGameUrl(gameId),
 		status: gameData.highestAwardKind || "none",
 		title: gameData.title
 	}

@@ -1,6 +1,6 @@
 import { type AuthObject, getGame } from "@retroachievements/api";
 import type { FetchedRaGame, RaGame } from "../types";
-import { raCoverUrl, raGameUrl } from "./utils";
+import { raCoverUrl } from "./utils";
 import { stringToArray } from "../utils";
 
 export const getGameBoxartUrl = async (raAuth: AuthObject, gamesList: FetchedRaGame[]) => {
@@ -15,15 +15,11 @@ export const getGameBoxartUrl = async (raAuth: AuthObject, gamesList: FetchedRaG
 		const coverUrl = raCoverUrl(g.imageBoxArt);
 		games.push({
 			...game,
-			console: g.console,
-			gameId: g.id,
-			title: g.title,
-			setUrl: raGameUrl(g.id),
 			genres,
 			developers,
 			publishers,
 			coverUrl,
-		})
+		});
 	}
 	return games;
 }
