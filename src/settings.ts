@@ -9,6 +9,7 @@ export interface RaPluginSettings {
 	includeSubsets: boolean;
 	displayRibbonIcon: boolean;
 	autoOpenAddedGame: boolean;
+	consoleSubfolders: boolean;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
@@ -19,6 +20,7 @@ export const DEFAULT_SETTINGS: RaPluginSettings = {
 	includeSubsets: false,
 	displayRibbonIcon: true,
 	autoOpenAddedGame: true,
+	consoleSubfolders: true,
 };
 
 export class RaSettingTab extends PluginSettingTab {
@@ -78,6 +80,28 @@ export class RaSettingTab extends PluginSettingTab {
 			.addToggle(btn => {
 				btn.setValue(this.plugin.settings.autoOpenAddedGame).onChange(async (value) => {
 					this.plugin.settings.autoOpenAddedGame = value;
+					await this.plugin.saveSettings();
+				})
+			});
+
+		const consoleSubfoldersDesc = document.createDocumentFragment();
+		consoleSubfoldersDesc.appendText("Enabled: Games go into folders of the consoles name. E.g. ");
+		consoleSubfoldersDesc.createEl("br");
+		consoleSubfoldersDesc.createEl("code", {
+			text: "~/PlayStation 2/The Simpsons Hit & Run",
+		});
+		consoleSubfoldersDesc.createEl("br");
+		consoleSubfoldersDesc.appendText("Disabled: Games go into the game note directory. E.g. ");
+		consoleSubfoldersDesc.createEl("br");
+		consoleSubfoldersDesc.createEl("code", {
+			text: "~/The Simpsons Hit & Run (PlayStation 2)",
+		});
+		new Setting(containerEl)
+			.setName("Console subfolders")
+			.setDesc(consoleSubfoldersDesc)
+			.addToggle(btn => {
+				btn.setValue(this.plugin.settings.consoleSubfolders).onChange(async (value) => {
+					this.plugin.settings.consoleSubfolders = value;
 					await this.plugin.saveSettings();
 				})
 			});

@@ -1,6 +1,7 @@
 import { type AuthObject, getUserCompletionProgress } from "@retroachievements/api";
 import type { FetchedRaGame } from "../types";
 import { raGameUrl } from "./utils";
+import { consoleNameSanitizer } from "../utils";
 
 export const getAllRaGames = async (raAuth: AuthObject, raUsername: string) => {
 	let gamesList: FetchedRaGame[] = [];
@@ -18,7 +19,7 @@ export const getAllRaGames = async (raAuth: AuthObject, raUsername: string) => {
 				return {
 					title: game.title,
 					gameId: game.gameId,
-					console: game.consoleName,
+					console: consoleNameSanitizer(game.consoleName),
 					setUrl: raGameUrl(game.gameId),
 					status: game.highestAwardKind || 'none',
 				};

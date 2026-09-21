@@ -3,6 +3,7 @@ import RaSearchPlugin from "../main";
 import { FetchedRaGame } from "../types";
 import { raGameUrl } from "./utils";
 import { getGameBoxartUrl } from "./gameSummary";
+import { consoleNameSanitizer } from "../utils";
 
 
 export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) => {
@@ -20,7 +21,7 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 	}
 
 	const fetchedGame: FetchedRaGame = {
-		console: gameData.consoleName,
+		console: consoleNameSanitizer(gameData.consoleName),
 		gameId: gameId,
 		setUrl: raGameUrl(gameId),
 		status: gameData.highestAwardKind || "none",

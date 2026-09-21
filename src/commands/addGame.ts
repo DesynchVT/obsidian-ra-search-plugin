@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import type { RaGame, RaMetaData } from "../types";
 import type RaSearchPlugin from "../main";
-import { ensureFolderStructure, gameToFileName, toInternalLink } from "../utils";
+import { consoleNameSanitizer, ensureFolderStructure, gameToFileName, toInternalLink } from "../utils";
 
 export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 	let notePath = gameToFileName(plugin, gameData.title, gameData.console);
@@ -11,9 +11,10 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 		const gameNote = await plugin.app.vault.create(notePath, "");
 
 		await plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
+			const consoleName = consoleNameSanitizer(gameData.console);
 			let gameObj: RaMetaData = {
 				title: gameData.title,
-				console: gameData.console,
+				console: consoleName,
 				genres: gameData.genres,
 				status: gameData.status,
 				raDevelopers: [],
@@ -26,7 +27,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 			if (plugin.settings.propertiesAsLinks) {
 				gameObj = {
 					...gameObj,
-					console: toInternalLink(gameData.console) as string,
+					console: toInternalLink(consoleName) as string,
 					genres: toInternalLink(gameData.genres) as string[],
 					developers: toInternalLink(gameData.developers) as string[],
 					publishers: toInternalLink(gameData.publishers) as string[],

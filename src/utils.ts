@@ -36,9 +36,18 @@ export const noteExists = async (app: App, path: string) => {
 
 export const gameToFileName = (plugin: RaSearchPlugin, gameTitle: string, consoleName: string) => {
 	let t = gameTitle.replaceAll(/:|\\|\//g, " -");
-	let c = consoleName.replaceAll(/\//g, "-");
-	return normalizePath(`${plugin.settings.raGamesPath}/${c}/${t}.md`);
+	let c = consoleNameSanitizer(consoleName);
+	if (plugin.settings.consoleSubfolders) {
+		return normalizePath(`${plugin.settings.raGamesPath}/${c}/${t}.md`);
+	} else {
+		return normalizePath(`${plugin.settings.raGamesPath}/${t} (${c}).md`);
+	}
 }
+
+export const consoleNameSanitizer = (consoleName: string) => {
+	return consoleName.replaceAll(/\//g, "-");
+}
+
 export function isNumeric(str: string) {
 	if (typeof str != "string") return false // we only process strings!  
 	return !isNaN(+str) && //use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
