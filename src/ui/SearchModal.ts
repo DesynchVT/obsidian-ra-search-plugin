@@ -61,8 +61,13 @@ export class SearchModal extends Modal {
 		}
 
 		try {
-			const addGameSuccess = await addGame(this.plugin, game);
-			if (!addGameSuccess) {
+			const gameNote = await addGame(this.plugin, game);
+			if (gameNote != null) {
+				new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
+				if (this.plugin.settings.autoOpenAddedGame) {
+					const leaf = this.plugin.app.workspace.getLeaf(true);
+					await leaf.openFile(gameNote);
+				}
 				this.close();
 				return;
 			}
@@ -71,9 +76,7 @@ export class SearchModal extends Modal {
 			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}."`);
 			return;
 		}
-		new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
 		this.close();
-
 	}
 
 	isInputValid(inputVal: string): { success: boolean, msg: string, id?: number } {

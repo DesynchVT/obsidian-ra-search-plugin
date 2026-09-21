@@ -34,7 +34,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 			}
 			Object.assign(fm, gameObj);
 		});
-		return true;
+		return gameNote;
 	} catch (error) {
 		// @ts-ignore
 		if (error?.message === "File already exists.") {
@@ -42,6 +42,6 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 		} else {
 			console.error(error)
 		}
-		return false;
+		return null;
 	}
 }

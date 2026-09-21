@@ -8,6 +8,7 @@ export interface RaPluginSettings {
 	raGamesPath: string;
 	includeSubsets: boolean;
 	displayRibbonIcon: boolean;
+	autoOpenAddedGame: boolean;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
@@ -17,6 +18,7 @@ export const DEFAULT_SETTINGS: RaPluginSettings = {
 	raGamesPath: "RetroAchievements/library",
 	includeSubsets: false,
 	displayRibbonIcon: true,
+	autoOpenAddedGame: true,
 };
 
 export class RaSettingTab extends PluginSettingTab {
@@ -66,6 +68,16 @@ export class RaSettingTab extends PluginSettingTab {
 			.addToggle(btn => {
 				btn.setValue(this.plugin.settings.propertiesAsLinks).onChange(async (value) => {
 					this.plugin.settings.propertiesAsLinks = value;
+					await this.plugin.saveSettings();
+				})
+			});
+
+		new Setting(containerEl)
+			.setName("Auto open added game")
+			.setDesc(`Automatically open newly added game notes in a new tab. Does NOT affect auto import.\nDefault: ${DEFAULT_SETTINGS.autoOpenAddedGame}`)
+			.addToggle(btn => {
+				btn.setValue(this.plugin.settings.autoOpenAddedGame).onChange(async (value) => {
+					this.plugin.settings.autoOpenAddedGame = value;
 					await this.plugin.saveSettings();
 				})
 			});
