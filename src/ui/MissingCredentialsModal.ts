@@ -1,6 +1,13 @@
 import { Modal, Setting } from "obsidian";
 import RaSearchPlugin from "../main";
 
+interface AppWithSettingsTab {
+	setting: {
+		open(): void;
+		openTabById(id: string): void;
+	};
+}
+
 export class MissingCredentialsModal extends Modal {
 	private readonly plugin: RaSearchPlugin;
 	constructor(plugin: RaSearchPlugin) {
@@ -33,8 +40,7 @@ export class MissingCredentialsModal extends Modal {
 			.addButton((btn) => btn.setButtonText("Open settings").setCta()
 				.onClick(() => {
 					this.close();
-					(this.app as any).setting.open();
-					(this.app as any).setting.openTabById(this.plugin.manifest.id);
+					this.openPluginSettings()
 				}))
 			.addButton((btn) => btn.setButtonText("Cancel")
 				.onClick(() => {
@@ -43,5 +49,13 @@ export class MissingCredentialsModal extends Modal {
 	}
 	onClose() {
 		this.contentEl.empty();
+	}
+
+	private openPluginSettings(): boolean {
+		const app = this.app as unknown as Partial<AppWithSettingsTab>;
+		if (!app.setting) return false;
+		app.setting.open();
+		app.setting.openTabById(this.plugin.manifest.id);
+		return true;
 	}
 }
