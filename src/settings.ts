@@ -46,7 +46,7 @@ export class RaSettingTab extends PluginSettingTab {
 				})
 			});
 		const raApiKeyDesc = document.createDocumentFragment();
-		raApiKeyDesc.appendText("Your personal API key from retroachievements.org. Found under your ");
+		raApiKeyDesc.appendText("Your personal API key from retroachievements.org. Found in ");
 		raApiKeyDesc.createEl("a", {
 			text: "RA user settings",
 			href: "https://retroachievements.org/settings?tab=applications",
@@ -84,17 +84,28 @@ export class RaSettingTab extends PluginSettingTab {
 				})
 			});
 
+		new Setting(containerEl)
+			.setName("Game note directory")
+			.setDesc(`The path RA games are imported to.\nDefault: ${DEFAULT_SETTINGS.raGamesPath}`)
+			.addText((text) => {
+				text.setValue(this.plugin.settings.raGamesPath).onChange(async (val) => {
+					this.plugin.settings.raGamesPath = val.trim();
+					await this.plugin.saveSettings();
+				});
+				text.setPlaceholder(DEFAULT_SETTINGS.raGamesPath);
+			});
+
 		const consoleSubfoldersDesc = document.createDocumentFragment();
-		consoleSubfoldersDesc.appendText("Enabled: Games go into folders of the consoles name. E.g. ");
+		consoleSubfoldersDesc.appendText("Enabled: Games go into subfolders of the console name. E.g. ");
 		consoleSubfoldersDesc.createEl("br");
 		consoleSubfoldersDesc.createEl("code", {
-			text: "~/PlayStation 2/The Simpsons Hit & Run",
+			text: "~/PlayStation/Crash Bandicoot",
 		});
 		consoleSubfoldersDesc.createEl("br");
 		consoleSubfoldersDesc.appendText("Disabled: Games go into the game note directory. E.g. ");
 		consoleSubfoldersDesc.createEl("br");
 		consoleSubfoldersDesc.createEl("code", {
-			text: "~/The Simpsons Hit & Run (PlayStation 2)",
+			text: "~/Crash Bandicoot (PlayStation)",
 		});
 		new Setting(containerEl)
 			.setName("Console subfolders")
@@ -114,17 +125,6 @@ export class RaSettingTab extends PluginSettingTab {
 					this.plugin.settings.includeSubsets = value;
 					await this.plugin.saveSettings();
 				})
-			});
-
-		new Setting(containerEl)
-			.setName("Game note directory")
-			.setDesc(`The path imported RA games are imported to.\nDefault: ${DEFAULT_SETTINGS.raGamesPath}`)
-			.addText((text) => {
-				text.setValue(this.plugin.settings.raGamesPath).onChange(async (val) => {
-					this.plugin.settings.raGamesPath = val.trim();
-					await this.plugin.saveSettings();
-				});
-				text.setPlaceholder(DEFAULT_SETTINGS.raGamesPath);
 			});
 
 		new Setting(containerEl)
