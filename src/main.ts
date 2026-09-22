@@ -7,7 +7,7 @@ import {
 	RaSettingTab,
 } from './settings';
 import { type AuthObject, buildAuthorization } from '@retroachievements/api';
-import { runAddGameById, runAutoImport } from './commands';
+import { runAddGameById, runAutoImport, runCreateBase } from './commands';
 import { RA_LOGO_ICON_ID, registerRaIcon } from './icons';
 
 export default class RaSearchPlugin extends Plugin {
@@ -36,6 +36,12 @@ export default class RaSearchPlugin extends Plugin {
 			id: 'add-game-by-id',
 			name: 'Add game',
 			callback: async () => await runAddGameById(this),
+		});
+
+		this.addCommand({
+			id: 'create-base',
+			name: 'Create base',
+			callback: async () => await runCreateBase(this),
 		});
 	}
 	toggleRibbonIcon() {
