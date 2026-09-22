@@ -56,7 +56,7 @@ export class SearchModal extends Modal {
 
 		const game = await getSpecificGame(this.plugin, inputCheck.id)
 		if (!game) {
-			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}." It might not exist.`);
+			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}"`);
 			return;
 		}
 

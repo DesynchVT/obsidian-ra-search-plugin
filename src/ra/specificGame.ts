@@ -1,32 +1,44 @@
 import { getGameInfoAndUserProgress } from "@retroachievements/api";
 import RaSearchPlugin from "../main";
-import { FetchedRaGame } from "../types";
-import { raGameUrl } from "./utils";
+import { FetchedRaGame, RaGame } from "../types";
+import { displayCredentialsError, raGameUrl } from "./utils";
 import { getGameBoxartUrl } from "./gameSummary";
 import { consoleNameSanitizer } from "../utils";
+import { Notice } from "obsidian";
 
 
 export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) => {
-	const gameData = await getGameInfoAndUserProgress(
-		plugin.raAuth,
-		{
-			username: plugin.settings.raUsername,
-			gameId: gameId,
+	let raGame: RaGame | undefined = undefined;
+	try {
+
+		const gameData = await getGameInfoAndUserProgress(
+			plugin.raAuth,
+			{
+				username: plugin.settings.raUsername,
+				gameId: gameId,
+			}
+		);
+
+		// API returns an empty array if no game with given ID is found, for some reason
+		if (Array.isArray(gameData) && gameData.length <= 0) {
+			return undefined;
 		}
-	);
 
-	// API returns an empty array if no game with given ID is found, for some reason
-	if (Array.isArray(gameData) && gameData.length <= 0) {
-		return undefined;
+		const fetchedGame: FetchedRaGame = {
+			console: consoleNameSanitizer(gameData.consoleName),
+			gameId: gameId,
+			setUrl: raGameUrl(gameId),
+			status: gameData.highestAwardKind || "none",
+			title: gameData.title
+		}
+		raGame = (await getGameBoxartUrl(plugin.raAuth, [fetchedGame])).first();
+	} catch (error: any) {
+		console.error(error);
+		if (error?.message?.includes("422")) {
+			displayCredentialsError();
+		} else {
+			new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+		}
 	}
-
-	const fetchedGame: FetchedRaGame = {
-		console: consoleNameSanitizer(gameData.consoleName),
-		gameId: gameId,
-		setUrl: raGameUrl(gameId),
-		status: gameData.highestAwardKind || "none",
-		title: gameData.title
-	}
-	const raGame = (await getGameBoxartUrl(plugin.raAuth, [fetchedGame])).first();
 	return raGame;
 }

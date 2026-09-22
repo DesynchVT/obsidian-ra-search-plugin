@@ -1,7 +1,7 @@
 import { addGame } from "../commands";
 import RaSearchPlugin from "../main";
 import { ensureFolderStructure, gameToFileName, noteExists, requireCredentials } from "../utils";
-import { getGameBoxartUrl, getAllRaGames } from "../ra";
+import { getGameBoxartUrl, getAllRaGames, displayCredentialsError } from "../ra";
 import { FetchedRaGame } from "../types";
 import { Notice } from "obsidian";
 
@@ -19,7 +19,11 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 		new Notice(`${plugin.manifest.name}: Auto import completed!`);
 	} catch (error: any) {
 		console.error(error);
-		new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+		if (error?.message?.includes("422")) {
+			displayCredentialsError();
+		} else {
+			new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+		}
 	}
 
 }
