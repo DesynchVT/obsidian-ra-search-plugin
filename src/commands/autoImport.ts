@@ -17,12 +17,13 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 			return
 		}
 		new Notice(`${plugin.manifest.name}: Auto import completed!`);
-	} catch (error: any) {
+	} catch (error) {
 		console.error(error);
-		if (error?.message?.includes("422")) {
+		const errorMsg = error instanceof Error ? error.message : String(error);
+		if (errorMsg.includes("422")) {
 			displayCredentialsError();
 		} else {
-			new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("error-text");
 		}
 	}
 

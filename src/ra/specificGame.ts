@@ -32,12 +32,13 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 			title: gameData.title
 		}
 		raGame = (await getGameBoxartUrl(plugin.raAuth, [fetchedGame])).first();
-	} catch (error: any) {
+	} catch (error) {
 		console.error(error);
-		if (error?.message?.includes("422")) {
+		const errorMsg = error instanceof Error ? error.message : String(error);
+		if (errorMsg.includes("422")) {
 			displayCredentialsError();
 		} else {
-			new Notice(`${plugin.manifest.name}: ${error}`).containerEl.addClass("error-text");
+			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("error-text");
 		}
 	}
 	return raGame;
