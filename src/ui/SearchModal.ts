@@ -1,6 +1,6 @@
 import { Modal, Notice, Setting } from "obsidian";
 import RaSearchPlugin from "../main";
-import { isNumeric } from "../utils";
+import { isNumeric, openVaultNote } from "../utils";
 import { getSpecificGame } from "../ra";
 import { addGame } from "../commands";
 
@@ -65,8 +65,7 @@ export class SearchModal extends Modal {
 			if (gameNote != null) {
 				new Notice(`${this.plugin.manifest.name}: Imported "${game.title}"`);
 				if (this.plugin.settings.autoOpenAddedGame) {
-					const leaf = this.plugin.app.workspace.getLeaf(true);
-					await leaf.openFile(gameNote);
+					await openVaultNote(this.app, gameNote);
 				}
 				this.close();
 				return;

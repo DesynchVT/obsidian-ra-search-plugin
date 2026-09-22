@@ -29,9 +29,9 @@ export const noteExists = async (app: App, path: string) => {
 	let p = normalizePath(path)
 	const file = app.vault.getAbstractFileByPath(p);
 	if (file instanceof (TFile)) {
-		return true;
+		return file;
 	}
-	return false;
+	return null;
 }
 
 export const gameToFileName = (plugin: RaSearchPlugin, gameTitle: string, consoleName: string) => {
@@ -64,4 +64,9 @@ export function requireCredentials(plugin: RaSearchPlugin): boolean {
 		return false;
 	}
 	return true;
+}
+
+export async function openVaultNote(app: App, gameNote: TFile) {
+	const leaf = app.workspace.getLeaf(true);
+	await leaf.openFile(gameNote);
 }
