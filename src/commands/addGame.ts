@@ -17,7 +17,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 				console: consoleName,
 				genres: gameData.genres,
 				status: gameData.status,
-				raDevelopers: [],
+				// raDevelopers: [],
 				developers: gameData.developers,
 				publishers: gameData.publishers,
 				setUrl: gameData.setUrl,

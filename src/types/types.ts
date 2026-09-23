@@ -7,7 +7,7 @@ export type RaGame = {
 	setUrl: string,
 	status: AwardKind | 'none';
 	genres: string[],
-	raDevelopers?: string[],
+	// raDevelopers?: string[],
 	developers: string[],
 	publishers: string[],
 	coverUrl: string,
@@ -27,7 +27,7 @@ export type RaMetaData = {
 	setUrl: string,
 	status: string;
 	genres: string[],
-	raDevelopers?: string[],
+	// raDevelopers?: string[],
 	developers: string[],
 	publishers: string[],
 	coverUrl: string,
