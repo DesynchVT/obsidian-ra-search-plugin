@@ -15,6 +15,7 @@ export default class RaSearchPlugin extends Plugin {
 	rootPath!: string;
 	raAuth!: AuthObject;
 	private ribbonEl: HTMLElement | null = null;
+	private autoImportAbort: AbortController | null = null;
 
 	async onload() {
 		registerRaIcon();
@@ -43,7 +44,49 @@ export default class RaSearchPlugin extends Plugin {
 			name: 'Create base',
 			callback: async () => await runCreateBase(this),
 		});
+
+		this.addCommand({
+			id: 'cancel-auto-import',
+			name: 'Cancel auto import',
+			checkCallback: (checking) => {
+				if (!this.isAutoImportRunning()) {
+					return false;
+				}
+				if (!checking) {
+					this.cancelAutoImport();
+				}
+				return true;
+			},
+		});
 	}
+
+	isAutoImportRunning(): boolean {
+		return this.autoImportAbort !== null;
+	}
+
+	startAutoImport() {
+		if (this.autoImportAbort) {
+			return null;
+		}
+		const controller = new AbortController();
+		this.autoImportAbort = controller;
+		return controller;
+	}
+
+	finishAutoImport(controller: AbortController) {
+		if (this.autoImportAbort === controller) {
+			this.autoImportAbort = null;
+		}
+	}
+
+	cancelAutoImport() {
+		if (!this.autoImportAbort) {
+			return false;
+		}
+		this.autoImportAbort.abort();
+		return true;
+	}
+
 	toggleRibbonIcon() {
 		this.ribbonEl?.remove();
 		this.ribbonEl = null;
@@ -81,6 +124,8 @@ export default class RaSearchPlugin extends Plugin {
 		await runAddGameById(this);
 	}
 
-	onunload() { }
+	onunload() {
+		this.cancelAutoImport();
+	}
 }
 

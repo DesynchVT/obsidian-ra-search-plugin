@@ -58,7 +58,7 @@ export const stringToArray = (str: string) => {
 	return str?.split(", ").map(x => x.trim()) || [];
 }
 
-export function requireCredentials(plugin: RaSearchPlugin): boolean {
+export function requireCredentials(plugin: RaSearchPlugin) {
 	if (!plugin.settings.raUsername || !plugin.isTokenSet()) {
 		new MissingCredentialsModal(plugin).open();
 		return false;
@@ -69,4 +69,33 @@ export function requireCredentials(plugin: RaSearchPlugin): boolean {
 export async function openVaultNote(app: App, gameNote: TFile) {
 	const leaf = app.workspace.getLeaf(true);
 	await leaf.openFile(gameNote);
+}
+
+export function abortableSleep(ms: number, signal: AbortSignal): Promise<void> {
+	return new Promise((resolve, reject) => {
+		if (signal.aborted) {
+			reject(createAbortError());
+			return;
+		}
+		const timeoutId = window.setTimeout(() => {
+			signal.removeEventListener("abort", onAbort);
+			resolve();
+		}, ms);
+		const onAbort = () => {
+			window.clearTimeout(timeoutId);
+			reject(createAbortError());
+		};
+		signal.addEventListener("abort", onAbort, { once: true });
+	});
+}
+
+export function isAbortError(error: unknown) {
+	return (error instanceof Error || error instanceof DOMException)
+		&& error.name === "AbortError";
+}
+
+function createAbortError() {
+	const error = new Error("Aborted");
+	error.name = "AbortError";
+	return error;
 }
