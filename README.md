@@ -13,10 +13,11 @@ The plugin ships with just 3 easy-to-use commands. **Before you can use any of t
 ## Auto import RA library
 **Requires an RA account**
 
-As the name suggests, it imports every single game listed on your RA account. Choose to also import subsets in the settings!
+As the name suggests, it imports every single game listed on your RA account. Choose to also import subsets in the settings! Skips already imported games.
 
 ## Cancel auto import
 If auto import is taking too long, run the **Cancel auto import** command from the command palette to stop it. Already-created notes are kept.
+
 ## Add game
 **Requires an RA account**
 
