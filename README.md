@@ -5,7 +5,7 @@
 ![demo of base with imported RA-supported titles](https://github.com/DesynchVT/obsidian-ra-search-plugin/blob/86cf19781fafd0f9bc7db4654a0baf3f36f506a9/demo-images/library-base.png?raw=true)
 
 # Description
-Easily import your [RetroAchievements](https://retroachievements.org/) library with various metadata to see connections and themes between your games.
+Easily import your [RetroAchievements](https://retroachievements.org/) library with various metadata to discover connections and themes between your games.
 
 # Usage
 The plugin ships with just 3 easy-to-use commands. **Before you can use any of them**, you must set up your own RetroAchievements username and web API key in the settings. You can find your API key [under your RA user settings](https://retroachievements.org/settings?tab=applications)
