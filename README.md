@@ -62,7 +62,7 @@ I'm working on getting the plugin added to the official Obsidian community plugi
 1. Go to the [releases page](https://github.com/DesynchVT/obsidian-ra-search-plugin/releases) and download the latest release's `main.js`, `manifest.json`, and `styles.css`.
 2. In your vault, open (or create) the folder `<vault>/.obsidian/plugins/obsidian-ra-search-plugin/`. The folder names **must** match exactly.
 3. Copy the three downloaded files into that folder.
-4. In Obsidian, open Settings -> Community plugins and select Reload (or fully restart Obsidian).
+4. In Obsidian, open `Settings -> Community plugins` and select `Reload` (or fully restart Obsidian).
 5. Find RA Search in the list and toggle it on.
 Obsidian requires `Settings -> Community plugins -> Turn off safe mode` before any manually installed plugin can be enabled. Only install plugins from authors you trust.
 
