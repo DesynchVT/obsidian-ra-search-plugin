@@ -23,7 +23,7 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 		if (errorMsg.includes("422")) {
 			displayCredentialsError();
 		} else {
-			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("error-text");
+			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("ra-search-error-text");
 		}
 	}
 

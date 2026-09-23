@@ -38,7 +38,7 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 		if (errorMsg.includes("422")) {
 			displayCredentialsError();
 		} else {
-			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("error-text");
+			new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("ra-search-error-text");
 		}
 	}
 	return raGame;

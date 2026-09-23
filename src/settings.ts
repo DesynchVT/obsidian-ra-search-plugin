@@ -45,7 +45,7 @@ export class RaSettingTab extends PluginSettingTab {
 					this.plugin.rebuildRaAuth();
 				})
 			});
-		const raApiKeyDesc = document.createDocumentFragment();
+		const raApiKeyDesc = createFragment();
 		raApiKeyDesc.appendText("Your personal API key from retroachievements.org. Found in ");
 		raApiKeyDesc.createEl("a", {
 			text: "RA user settings",
@@ -95,7 +95,7 @@ export class RaSettingTab extends PluginSettingTab {
 				text.setPlaceholder(DEFAULT_SETTINGS.raGamesPath);
 			});
 
-		const consoleSubfoldersDesc = document.createDocumentFragment();
+		const consoleSubfoldersDesc = createFragment();
 		consoleSubfoldersDesc.appendText("Enabled: Games go into subfolders of the console name. E.g. ");
 		consoleSubfoldersDesc.createEl("br");
 		consoleSubfoldersDesc.createEl("code", {

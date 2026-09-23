@@ -37,11 +37,10 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 		});
 		return gameNote;
 	} catch (error) {
-		// @ts-ignore
-		if (error?.message === "File already exists.") {
-			new Notice(`${plugin.manifest.name}: "${notePath}" already exists.`).containerEl.addClass("error-text");
+		if (error instanceof Error && error?.message === "File already exists.") {
+			new Notice(`${plugin.manifest.name}: "${notePath}" already exists.`).containerEl.addClass("ra-search-error-text");
 		} else {
-			console.error(error)
+			console.error(String(error));
 		}
 		return null;
 	}

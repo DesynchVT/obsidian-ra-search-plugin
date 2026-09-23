@@ -1,4 +1,4 @@
-import { Modal, Setting } from "obsidian";
+import { Modal, Notice, Setting } from "obsidian";
 import RaSearchPlugin from "../main";
 
 interface AppWithSettingsTab {
@@ -40,7 +40,11 @@ export class MissingCredentialsModal extends Modal {
 			.addButton((btn) => btn.setButtonText("Open settings").setCta()
 				.onClick(() => {
 					this.close();
-					this.openPluginSettings()
+					const settingsOpenSuccess = this.openPluginSettings()
+					if (!settingsOpenSuccess) {
+						// Theoretically should never happen, but here we are
+						new Notice(`${this.plugin.manifest.name}: Couldn't open settings. Please do so manually.`).containerEl.addClass("ra-search-error-text");
+					}
 				}))
 			.addButton((btn) => btn.setButtonText("Cancel")
 				.onClick(() => {

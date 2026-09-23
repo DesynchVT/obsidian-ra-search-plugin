@@ -14,7 +14,7 @@ export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
 	rootPath!: string;
 	raAuth!: AuthObject;
-	private ribbonEl!: HTMLElement | null;
+	private ribbonEl: HTMLElement | null = null;
 
 	async onload() {
 		registerRaIcon();
@@ -45,11 +45,10 @@ export default class RaSearchPlugin extends Plugin {
 		});
 	}
 	toggleRibbonIcon() {
-		if (this.settings.displayRibbonIcon && !this.ribbonEl) {
+		this.ribbonEl?.remove();
+		this.ribbonEl = null;
+		if (this.settings.displayRibbonIcon) {
 			this.ribbonEl = this.addRibbonIcon(RA_LOGO_ICON_ID, "Add RA achievement set", (_evt: MouseEvent) => void this.handleRibbonClick());
-		} else {
-			this.ribbonEl?.remove();
-			this.ribbonEl = null;
 		}
 	}
 

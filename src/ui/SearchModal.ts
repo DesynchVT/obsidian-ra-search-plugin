@@ -16,7 +16,7 @@ export class SearchModal extends Modal {
 		this.titleEl.setText("Add game");
 
 		const form = this.contentEl.createEl("form");
-		this.errorEl = form.createDiv({ cls: "error-text" });
+		this.errorEl = form.createDiv({ cls: "ra-search-error-text" });
 
 		let inputValue = "";
 		new Setting(form)

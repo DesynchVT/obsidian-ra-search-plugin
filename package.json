@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "obsidian-ra-search-plugin",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Create set notes and automatically insert metadata of games with RetroAchievements support",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {
