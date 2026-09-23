@@ -118,7 +118,7 @@ export class RaSettingTab extends PluginSettingTab {
 			});
 
 		new Setting(containerEl)
-			.setName("Include subsets")
+			.setName("Include subsets in auto import")
 			.setDesc(`Whether auto import includes subsets or not.\nDefault: ${DEFAULT_SETTINGS.includeSubsets}`)
 			.addToggle(btn => {
 				btn.setValue(this.plugin.settings.includeSubsets).onChange(async (value) => {
