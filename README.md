@@ -10,17 +10,17 @@ Easily import your [RetroAchievements](https://retroachievements.org/) library w
 # Usage
 The plugin ships with just 3 easy-to-use commands. **Before you can use any of them**, you must set up your own RetroAchievements username and web API key in the settings. You can find your API key [under your RA user settings](https://retroachievements.org/settings?tab=applications)
 
-## `Auto import RA library`
+## Auto import RA library
 **Requires an RA account**
 As the name suggests, it imports every single game listed on your RA account. Choose to also import subsets in the settings!
-## `Add game`
+## Add game
 **Requires an RA account**
 Add any game or subset to your notes, whether or not you've played it before!
-## `Create base`
+## Create base
 Automatically create a base within Obsidian, automatically showing files in your configured RA notes library. You can customize it from here yourself, it's just to get you going.
 
 # Settings
-![image of the settings menu in Obsidian]()
+![image of the settings menu in Obsidian](https://github.com/DesynchVT/obsidian-ra-search-plugin/blob/fc921981fe43b3d6422b624ba932e247bfdd160b/demo-images/plugin-settings.png?raw=true)
 
 `RA username`: self explanatory.
 
