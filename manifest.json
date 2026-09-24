@@ -1,9 +1,9 @@
 {
 	"id": "ra-search",
 	"name": "RA Search",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"minAppVersion": "1.11.4",
-	"description": "Create set notes and automatically insert metadata of games with RetroAchievements support",
+	"description": "Create set notes and automatically insert metadata of games with RetroAchievements support.",
 	"author": "DesynchVT",
 	"authorUrl": "https://retroachievements.org/user/Desynch",
 	"fundingUrl": "",
