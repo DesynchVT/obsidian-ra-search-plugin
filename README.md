@@ -60,7 +60,7 @@ I'm working on getting the plugin added to the official Obsidian community plugi
 ## Manual installation
 ### Option A: Install from a release
 1. Go to the [releases page](https://github.com/DesynchVT/obsidian-ra-search-plugin/releases) and download the latest release's `main.js`, `manifest.json`, and `styles.css`.
-2. In your vault, open (or create) the folder `<vault>/.obsidian/plugins/obsidian-ra-search-plugin/`. The folder names **must** match exactly.
+2. In your vault, open (or create) the folder `<vault>/.obsidian/plugins/ra-search-plugin/`. The folder names **must** match exactly.
 3. Copy the three downloaded files into that folder.
 4. In Obsidian, open `Settings -> Community plugins` and select `Reload` (or fully restart Obsidian).
 5. Find RA Search in the list and toggle it on.
@@ -77,4 +77,4 @@ Requires Node.js (https://nodejs.org/) 18+ and npm.
 
 4. npm run build
 
-5. Copy `main.js`, `manifest.json`, and `styles.css` into `<vault>/.obsidian/plugins/obsidian-ra-search-plugin/` and enable the plugin as in steps 4–5 above.
+5. Copy `main.js`, `manifest.json`, and `styles.css` into `<vault>/.obsidian/plugins/ra-search-plugin/` and enable the plugin as in steps 4–5 above.
