@@ -8,7 +8,7 @@ export const getGameBoxartUrl = async (raAuth: AuthObject, gamesList: FetchedRaG
 	for (const game of gamesList) {
 		signal?.throwIfAborted();
 		const g = await getGame(raAuth, {
-			gameId: game.gameId
+			gameId: game.gameId,
 		});
 		const genres = stringToArray(g.genre);
 		const developers = stringToArray(g.developer);

@@ -16,6 +16,7 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 			{
 				username: plugin.settings.raUsername,
 				gameId: gameId,
+				shouldIncludeHighestAwardMetadata: true,
 			}
 		);
 
