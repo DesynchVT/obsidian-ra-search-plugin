@@ -1,6 +1,6 @@
 # Obsidian RA Search plugin
 
-**This plugin is not officially supported or endorsed by the RetroAchievements team. It is independently created by [DesynchVT](https://github.com/DesynchVT).**
+**This plugin is not officially supported or endorsed by the RetroAchievements team. It is independently developed by [DesynchVT](https://github.com/DesynchVT).**
 
 # Description
 Easily import your [RetroAchievements](https://retroachievements.org/) library with various metadata to discover connections and themes between your games.

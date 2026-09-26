@@ -20,7 +20,7 @@ const view: CardsView = {
 
 export const runCreateBase = async (plugin: RaSearchPlugin) => {
 	const base: BasesConfigFile = {
-		filters: { and: [`file.inFolder("${plugin.settings.raGamesPath}")`] },
+		filters: { and: [`file.inFolder("${plugin.settings.raGamesPath}")`, 'category == "RetroAchievements"'] },
 		views: [view],
 	};
 	const fileName = `${plugin.settings.raGamesPath}/RA Library.base`;
