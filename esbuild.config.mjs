@@ -34,6 +34,9 @@ const context = await esbuild.context({
 	],
 	format: 'cjs',
 	target: 'es2021',
+	define: {
+		'process.env': '{}',
+	},
 	loader: {
 		'.svg': 'text',
 	},
