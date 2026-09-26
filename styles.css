@@ -7,12 +7,13 @@ If your plugin does not need CSS, delete this file.
 */
 
 :root {
-	--ra-search-glow-radius: 0 0 8px 1px;
 	--ra-search-gold: #ffd700;
-	--ra-search-gold-glow: var(--ra-search-glow-radius) var(--ra-search-gold);
 	--ra-search-silver: #c0c0c0;
-	--ra-search-silver-glow: var(--ra-search-glow-radius) var(--ra-search-silver);
 	--ra-search-bronze: #cd7f32;
+	--ra-search-glow-radius: 0 0 8px 1px;
+
+	--ra-search-gold-glow: var(--ra-search-glow-radius) var(--ra-search-gold);
+	--ra-search-silver-glow: var(--ra-search-glow-radius) var(--ra-search-silver);
 	--ra-search-bronze-glow: var(--ra-search-glow-radius) var(--ra-search-bronze);
 }
 .ra-search-error-text {
@@ -37,7 +38,7 @@ If your plugin does not need CSS, delete this file.
 }
 
 .bases-cards-item:has(.ra-status-beaten-hardcore),
-.bases-cards-item:has(.ra-status-beaten-casualy),
+.bases-cards-item:has(.ra-status-beaten-casual),
 .bases-cards-item:has(.ra-status-beaten-softcore) {
 	border-color: var(--ra-search-bronze);
 }
