@@ -72,7 +72,7 @@ export class SearchModal extends Modal {
 			}
 		} catch (error) {
 			console.error(error);
-			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}."`);
+			this.errorEl?.setText(`Error importing game with ID "${inputCheck.id}"`);
 			return;
 		}
 		this.close();
@@ -92,8 +92,8 @@ export class SearchModal extends Modal {
 			const id = inputVal.substring(inputVal.lastIndexOf("/") + 1);
 			inputVal = id;
 		}
+		// check is just ID
 		if (!isNumeric(inputVal) || +inputVal < 0) {
-			// check is just ID
 			return {
 				success: false,
 				msg: `${originalInput} is not a valid RA game id.`

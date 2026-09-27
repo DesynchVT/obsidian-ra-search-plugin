@@ -2,6 +2,8 @@ import { App, normalizePath, TFile, TFolder } from "obsidian";
 import RaSearchPlugin from "./main";
 import { MissingCredentialsModal } from "./ui/MissingCredentialsModal";
 
+export const ILLEGAL_NOTE_TITLE_CHARS_REGEX = /[.:/]/g;
+
 export const toInternalLink = (s: string | string[]) => {
 	if (Array.isArray(s)) {
 		return s
@@ -35,8 +37,8 @@ export const noteExists = async (app: App, path: string) => {
 }
 
 export const gameToFileName = (plugin: RaSearchPlugin, gameTitle: string, consoleName: string) => {
-	let t = gameTitle.replaceAll(/:|\\|\//g, " -");
-	let c = consoleNameSanitizer(consoleName);
+	let t = sanitizeGameTitle(gameTitle);
+	let c = sanitizeConsoleName(consoleName);
 	if (plugin.settings.consoleSubfolders) {
 		return normalizePath(`${plugin.settings.raGamesPath}/${c}/${t}.md`);
 	} else {
@@ -44,8 +46,28 @@ export const gameToFileName = (plugin: RaSearchPlugin, gameTitle: string, consol
 	}
 }
 
-export const consoleNameSanitizer = (consoleName: string) => {
-	return consoleName.replaceAll(/\//g, "-");
+export const sanitizeConsoleName = (consoleName: string) => {
+	let c = consoleName;
+	if (c[0] === ".") {
+		c = c.slice(1);
+	}
+	c = c.replaceAll(ILLEGAL_NOTE_TITLE_CHARS_REGEX, " - ")
+		.replaceAll("  ", " ");
+	return c;
+}
+
+export const sanitizeGameTitle = (title: string) => {
+	let t = title;
+	// Obsidian hides files that start with a fullstop from the file explorer.
+	if (t[0] === ".") {
+		t = t.slice(1);
+	}
+	// This line is specifically for the .hack// series of games, which has been causing trouble.
+	t = t.replaceAll("//", " - ");
+
+	t = t.replaceAll(ILLEGAL_NOTE_TITLE_CHARS_REGEX, " - ")
+		.replaceAll("  ", " ");
+	return t;
 }
 
 export function isNumeric(str: string) {

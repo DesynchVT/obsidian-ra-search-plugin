@@ -1,10 +1,8 @@
-import { stringifyYaml, type BasesConfigFile, type BasesConfigFileView } from 'obsidian';
+import { Notice, stringifyYaml, type BasesConfigFile, type BasesConfigFileView } from 'obsidian';
 import RaSearchPlugin from '../main';
 import { noteExists, openVaultNote } from '../utils';
 
 const RA_STATUS_MARKER = `html("<span class='ra-status-value'>" + if(status, status, "none") + "</span><div class='ra-status ra-status-" + if(status, status, "none") + "'></div>")`;
-// const RA_STATUS_MARKER = `html("<span class='ra-status-label'>Status</span><span class='ra-status-value ra-status-" + if(status, status, "none") + "'>" + if(status, status, "none") + "</span>")`;
-
 
 type CardsView = BasesConfigFileView & {
 	image?: string;
@@ -19,7 +17,7 @@ const view: CardsView = {
 	order: ["title", "console", "formula.raStatus"],
 	image: "coverUrl",
 	imageFit: "contain",
-	cardSize: 320,
+	cardSize: 240,
 	imageAspectRatio: 1.40
 };
 
@@ -34,6 +32,8 @@ export const runCreateBase = async (plugin: RaSearchPlugin) => {
 	let note = await noteExists(plugin.app, fileName);
 	if (!note) {
 		note = await plugin.app.vault.create(fileName, stringifyYaml(base));
+	} else {
+		new Notice(`${plugin.manifest.name}: Base already exists. Move or rename it to create another.`);
 	}
 	await openVaultNote(plugin.app, note);
 }

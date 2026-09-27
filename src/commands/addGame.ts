@@ -1,7 +1,7 @@
 import { Notice } from "obsidian";
 import type { RaGame, RaMetaData } from "../types";
 import type RaSearchPlugin from "../main";
-import { consoleNameSanitizer, ensureFolderStructure, gameToFileName, toInternalLink } from "../utils";
+import { sanitizeConsoleName, ensureFolderStructure, gameToFileName, toInternalLink, sanitizeGameTitle } from "../utils";
 
 export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 	let notePath = gameToFileName(plugin, gameData.title, gameData.console);
@@ -11,7 +11,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 		const gameNote = await plugin.app.vault.create(notePath, "");
 
 		await plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
-			const consoleName = consoleNameSanitizer(gameData.console);
+			const consoleName = sanitizeConsoleName(gameData.console);
 			let gameObj: RaMetaData = {
 				title: gameData.title,
 				console: consoleName,
@@ -31,6 +31,13 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 					genres: toInternalLink(gameData.genres) as string[],
 					developers: toInternalLink(gameData.developers) as string[],
 					publishers: toInternalLink(gameData.publishers) as string[],
+				}
+			}
+			// Test for illegal characters in note titles, then make an alias of the game's real title so it can be searched up easier
+			if (sanitizeGameTitle(gameObj.title) !== gameObj.title) {
+				gameObj = {
+					...gameObj,
+					aliases: [gameObj.title]
 				}
 			}
 			Object.assign(fm, gameObj);

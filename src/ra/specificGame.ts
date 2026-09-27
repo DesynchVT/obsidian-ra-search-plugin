@@ -3,14 +3,13 @@ import RaSearchPlugin from "../main";
 import { FetchedRaGame, RaGame } from "../types";
 import { displayCredentialsError, raGameUrl } from "./utils";
 import { getGameBoxartUrl } from "./gameSummary";
-import { consoleNameSanitizer } from "../utils";
+import { sanitizeConsoleName } from "../utils";
 import { Notice } from "obsidian";
 
 
 export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) => {
 	let raGame: RaGame | undefined = undefined;
 	try {
-
 		const gameData = await getGameInfoAndUserProgress(
 			plugin.raAuth,
 			{
@@ -26,7 +25,7 @@ export const getSpecificGame = async (plugin: RaSearchPlugin, gameId: number) =>
 		}
 
 		const fetchedGame: FetchedRaGame = {
-			console: consoleNameSanitizer(gameData.consoleName),
+			console: sanitizeConsoleName(gameData.consoleName),
 			gameId: gameId,
 			setUrl: raGameUrl(gameId),
 			status: gameData.highestAwardKind || "none",
