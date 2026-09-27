@@ -2,7 +2,7 @@ import { App, normalizePath, TFile, TFolder } from "obsidian";
 import RaSearchPlugin from "./main";
 import { MissingCredentialsModal } from "./ui/MissingCredentialsModal";
 
-export const ILLEGAL_NOTE_TITLE_CHARS_REGEX = /[.:/]/g;
+export const ILLEGAL_NOTE_TITLE_CHARS_REGEX = /[:/\\]/g;
 
 export const toInternalLink = (s: string | string[]) => {
 	if (Array.isArray(s)) {
