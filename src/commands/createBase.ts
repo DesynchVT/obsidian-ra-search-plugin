@@ -1,6 +1,6 @@
-import { Notice, stringifyYaml, type BasesConfigFile, type BasesConfigFileView } from 'obsidian';
+import { normalizePath, Notice, stringifyYaml, type BasesConfigFile, type BasesConfigFileView } from 'obsidian';
 import RaSearchPlugin from '../main';
-import { noteExists, openVaultNote } from '../utils';
+import { ensureFolderStructure, noteExists, openVaultNote } from '../utils';
 
 const RA_STATUS_MARKER = `html("<span class='ra-status-value'>" + if(status, status, "none") + "</span><div class='ra-status ra-status-" + if(status, status, "none") + "'></div>")`;
 
@@ -21,6 +21,8 @@ const view: CardsView = {
 	imageAspectRatio: 1.40
 };
 
+const baseName = "RA Library.base";
+
 export const runCreateBase = async (plugin: RaSearchPlugin) => {
 	const base: BasesConfigFile = {
 		filters: { and: [`file.inFolder("${plugin.settings.raGamesPath}")`, 'category == "RetroAchievements"'] },
@@ -28,12 +30,18 @@ export const runCreateBase = async (plugin: RaSearchPlugin) => {
 		views: [view],
 		properties: { "formula.raStatus": { displayName: "status" } }
 	};
-	const fileName = `${plugin.settings.raGamesPath}/RA Library.base`;
-	let note = await noteExists(plugin.app, fileName);
-	if (!note) {
-		note = await plugin.app.vault.create(fileName, stringifyYaml(base));
-	} else {
-		new Notice(`${plugin.manifest.name}: Base already exists. Move or rename it to create another.`);
+	const fileName = normalizePath(`${plugin.settings.raGamesPath}/${baseName}`);
+	try {
+		await ensureFolderStructure(plugin.app, plugin.settings.raGamesPath);
+		let note = await noteExists(plugin.app, fileName);
+		if (!note) {
+			note = await plugin.app.vault.create(fileName, stringifyYaml(base));
+		} else {
+			new Notice(`${plugin.manifest.name}: ${baseName} already exists. Opened without changes.`);
+		}
+		await openVaultNote(plugin.app, note);
+	} catch (error) {
+		console.error(String(error));
+		new Notice(`${plugin.manifest.name}: ${String(error)}`).containerEl.addClass("ra-search-error-text");
 	}
-	await openVaultNote(plugin.app, note);
 }

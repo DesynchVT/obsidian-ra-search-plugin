@@ -18,7 +18,7 @@ const wrap = (s: string) => `[[${s}]]`
 export const ensureFolderStructure = async (app: App, path: string) => {
 	let p = normalizePath(path)
 	// Remove *.md from the path
-	if (p.endsWith(".md")) {
+	if (p.endsWith(".md") || p.endsWith(".base")) {
 		p = p.substring(0, p.lastIndexOf("/"));
 	}
 	const file = app.vault.getAbstractFileByPath(p);
