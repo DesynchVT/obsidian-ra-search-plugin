@@ -1,5 +1,5 @@
 import { App, normalizePath, TFile, TFolder } from "obsidian";
-import RaSearchPlugin from "./main";
+import type RaSearchPlugin from "./main";
 import { MissingCredentialsModal } from "./ui/MissingCredentialsModal";
 
 export const ILLEGAL_NOTE_TITLE_CHARS_REGEX = /[:/\\]/g;
@@ -15,10 +15,11 @@ export const toInternalLink = (s: string | string[]) => {
 
 const wrap = (s: string) => `[[${s}]]`
 
+const FILE_EXTENSIONS = [".md", ".base", ".png", ".jpg", ".jpeg"];
+
 export const ensureFolderStructure = async (app: App, path: string) => {
 	let p = normalizePath(path)
-	// Remove *.md from the path
-	if (p.endsWith(".md") || p.endsWith(".base")) {
+	if (FILE_EXTENSIONS.some((ext) => p.endsWith(ext))) {
 		p = p.substring(0, p.lastIndexOf("/"));
 	}
 	const file = app.vault.getAbstractFileByPath(p);
@@ -69,6 +70,12 @@ export const sanitizeGameTitle = (title: string) => {
 		.replaceAll("  ", " ");
 	return t;
 }
+
+/** Pull the game ID out of a note's setUrl, for notes that don't store a gameId. */
+export const gameIdFromSetUrl = (setUrl: string): number | undefined => {
+	const match = setUrl.match(/\/game\/(\d+)/);
+	return match ? Number(match[1]) : undefined;
+};
 
 export function isNumeric(str: string) {
 	if (typeof str != "string") return false // we only process strings!  

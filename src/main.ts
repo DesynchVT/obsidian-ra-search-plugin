@@ -1,5 +1,8 @@
 import {
 	Plugin,
+	TAbstractFile,
+	TFile,
+	normalizePath,
 } from 'obsidian';
 import {
 	DEFAULT_SETTINGS,
@@ -7,8 +10,9 @@ import {
 	RaSettingTab,
 } from './settings';
 import { type AuthObject, buildAuthorization } from '@retroachievements/api';
-import { runAddGameById, runAutoImport, runCreateBase } from './commands';
+import { runAddGameById, runAutoImport, runCreateBase, runDownloadBoxArt } from './commands';
 import { RA_LOGO_ICON_ID, registerRaIcon } from './icons';
+import { gameIdFromSetUrl } from './utils';
 
 export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
@@ -25,6 +29,13 @@ export default class RaSearchPlugin extends Plugin {
 		this.addSettingTab(new RaSettingTab(this.app, this));
 		this.rebuildRaAuth();
 		this.toggleRibbonIcon();
+
+		// If a cover file is deleted, its `cover` frontmatter field must go with it.
+		// Otherwise the base renders a wikilink to a missing file and never falls back to
+		// the remote URL.
+		this.registerEvent(
+			this.app.vault.on('delete', (file) => void this.onCoverDeleted(file)),
+		);
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -43,6 +54,12 @@ export default class RaSearchPlugin extends Plugin {
 			id: 'create-base',
 			name: 'Create base',
 			callback: async () => await runCreateBase(this),
+		});
+
+		this.addCommand({
+			id: 'download-box-art',
+			name: 'Download missing box art',
+			callback: async () => await runDownloadBoxArt(this),
 		});
 
 		this.addCommand({
@@ -118,6 +135,40 @@ export default class RaSearchPlugin extends Plugin {
 				webApiKey: this.app.secretStorage.getSecret(this.settings.raWebApiKey) || ""
 			});
 		}
+	}
+
+	private findNoteBySetUrl(gameId: number): TFile | null {
+		const root = normalizePath(this.settings.raGamesPath);
+		for (const file of this.app.vault.getMarkdownFiles()) {
+			if (!file.path.startsWith(`${root}/`)) {
+				continue;
+			}
+			const fm = this.app.metadataCache.getCache(file.path)?.frontmatter;
+			const setUrl = typeof fm?.setUrl === "string" ? fm.setUrl : "";
+			if (gameIdFromSetUrl(setUrl) === gameId) {
+				return file;
+			}
+		}
+		return null;
+	}
+
+	private async onCoverDeleted(file: TAbstractFile) {
+		if (!(file instanceof TFile)) {
+			return;
+		}
+		const match = file.path.match(/boxart\/(\d+)\.[a-z0-9]+$/i);
+		if (!match) {
+			return;
+		}
+
+		const note = this.findNoteBySetUrl(Number(match[1]));
+		if (!note) {
+			return;
+		}
+
+		await this.app.fileManager.processFrontMatter(note, (frontmatter) => {
+			delete (frontmatter as Record<string, unknown>).cover;
+		});
 	}
 
 	private async handleRibbonClick() {

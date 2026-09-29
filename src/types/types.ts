@@ -31,6 +31,7 @@ export type RaMetaData = {
 	developers: string[],
 	publishers: string[],
 	coverUrl: string,
+	cover?: string,
 	category: 'RetroAchievements',
 	aliases?: string[],
 }

@@ -2,6 +2,7 @@ import { Notice } from "obsidian";
 import type { RaGame, RaMetaData } from "../types";
 import type RaSearchPlugin from "../main";
 import { sanitizeConsoleName, ensureFolderStructure, gameToFileName, toInternalLink, sanitizeGameTitle } from "../utils";
+import { downloadBoxArt } from "../ra";
 
 export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 	let notePath = gameToFileName(plugin, gameData.title, gameData.console);
@@ -9,6 +10,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 
 	try {
 		const gameNote = await plugin.app.vault.create(notePath, "");
+		const boxart = await downloadBoxArt(plugin, gameData.gameId, gameData.coverUrl);
 
 		await plugin.app.fileManager.processFrontMatter(gameNote, (fm) => {
 			const consoleName = sanitizeConsoleName(gameData.console);
@@ -23,6 +25,12 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 				setUrl: gameData.setUrl,
 				coverUrl: gameData.coverUrl,
 				category: "RetroAchievements",
+			}
+			if (boxart) {
+				gameObj = {
+					...gameObj,
+					cover: boxart,
+				}
 			}
 			if (plugin.settings.propertiesAsLinks) {
 				gameObj = {

@@ -10,6 +10,7 @@ export interface RaPluginSettings {
 	displayRibbonIcon: boolean;
 	autoOpenAddedGame: boolean;
 	consoleSubfolders: boolean;
+	downloadBoxArt: boolean;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
@@ -21,6 +22,7 @@ export const DEFAULT_SETTINGS: RaPluginSettings = {
 	displayRibbonIcon: true,
 	autoOpenAddedGame: true,
 	consoleSubfolders: true,
+	downloadBoxArt: true,
 };
 
 export class RaSettingTab extends PluginSettingTab {
@@ -123,6 +125,16 @@ export class RaSettingTab extends PluginSettingTab {
 			.addToggle(btn => {
 				btn.setValue(this.plugin.settings.includeSubsets).onChange(async (value) => {
 					this.plugin.settings.includeSubsets = value;
+					await this.plugin.saveSettings();
+				})
+			});
+
+		new Setting(containerEl)
+			.setName("Download box art into vault")
+			.setDesc(`Store game covers in your vault so the library can render offline. Default: ${DEFAULT_SETTINGS.downloadBoxArt}`)
+			.addToggle(btn => {
+				btn.setValue(this.plugin.settings.downloadBoxArt).onChange(async (value) => {
+					this.plugin.settings.downloadBoxArt = value;
 					await this.plugin.saveSettings();
 				})
 			});
