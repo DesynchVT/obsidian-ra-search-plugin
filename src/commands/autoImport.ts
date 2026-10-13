@@ -4,6 +4,8 @@ import { abortableSleep, ensureFolderStructure, gameToFileName, isAbortError, no
 import { getGameBoxartUrl, getAllRaGames, displayCredentialsError } from "../ra";
 import { FetchedRaGame } from "../types";
 import { Notice } from "obsidian";
+import { LATEST_FRONTMATTER_VERSION } from "../settings";
+import { updateFrontmatter } from "../frontmatter";
 
 export const runAutoImport = async (plugin: RaSearchPlugin) => {
 	if (!requireCredentials(plugin)) {
@@ -13,6 +15,10 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 	if (!abortController) {
 		new Notice(`${plugin.manifest.name}: An import is already running.`);
 		return;
+	}
+
+	if (!plugin.settings.frontmatterVersion || plugin.settings.frontmatterVersion < LATEST_FRONTMATTER_VERSION) {
+		await updateFrontmatter(plugin);
 	}
 
 	try {

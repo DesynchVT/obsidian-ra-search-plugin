@@ -25,6 +25,7 @@ export async function addGame(plugin: RaSearchPlugin, gameData: RaGame) {
 				setUrl: gameData.setUrl,
 				coverUrl: gameData.coverUrl,
 				category: "RetroAchievements",
+				categories: ["RetroAchievements"],
 			}
 			if (boxart) {
 				gameObj = {

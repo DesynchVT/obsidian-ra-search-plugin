@@ -1,6 +1,8 @@
 import { App, PluginSettingTab, Setting, SecretComponent } from 'obsidian';
 import RaSearchPlugin from './main';
 
+export const LATEST_FRONTMATTER_VERSION = 2;
+
 export interface RaPluginSettings {
 	raWebApiKey: string;
 	propertiesAsLinks: boolean;
@@ -11,6 +13,7 @@ export interface RaPluginSettings {
 	autoOpenAddedGame: boolean;
 	consoleSubfolders: boolean;
 	downloadBoxArt: boolean;
+	frontmatterVersion: number;
 }
 
 export const DEFAULT_SETTINGS: RaPluginSettings = {
@@ -23,6 +26,7 @@ export const DEFAULT_SETTINGS: RaPluginSettings = {
 	autoOpenAddedGame: true,
 	consoleSubfolders: true,
 	downloadBoxArt: true,
+	frontmatterVersion: 1,
 };
 
 export class RaSettingTab extends PluginSettingTab {
