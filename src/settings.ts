@@ -64,7 +64,7 @@ export class RaSettingTab extends PluginSettingTab {
 			.addComponent(el => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.raWebApiKey)
 				.onChange(async (val) => {
-					this.plugin.settings.raWebApiKey = val?.trim();
+					this.plugin.settings.raWebApiKey = val?.trim() ?? "";
 					await this.plugin.saveSettings();
 					this.plugin.rebuildRaAuth();
 				})
