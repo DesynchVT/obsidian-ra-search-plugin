@@ -26,7 +26,12 @@ const OBSIDIAN_BASE_NAME = "RA Library.base";
 
 export const runCreateBase = async (plugin: RaSearchPlugin) => {
 	const base: BasesConfigFile = {
-		filters: { and: [`file.inFolder("${plugin.settings.raGamesPath}")`, 'category == "RetroAchievements"'] },
+		filters: {
+			and: [
+				`file.inFolder("${plugin.settings.raGamesPath}")`,
+				'categories.contains("RetroAchievements") || category == "RetroAchievements"'
+			],
+		},
 		formulas: { raStatus: RA_STATUS_MARKER, raCover: RA_COVER_FORMULA, },
 		views: [view],
 		properties: { "formula.raStatus": { displayName: "status" } }

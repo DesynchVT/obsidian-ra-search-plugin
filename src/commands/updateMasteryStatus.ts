@@ -27,7 +27,7 @@ export const runUpdateMasteryStatus = async (plugin: RaSearchPlugin) => {
 
 		let updated = 0;
 		let skipped = 0;
-		for (const [i, game] of games.entries()) {
+		for (const game of games) {
 			abortController.signal.throwIfAborted();
 			const note = findNoteBySetUrl(plugin, game.gameId);
 			if (!note) {
