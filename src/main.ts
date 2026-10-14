@@ -20,15 +20,18 @@ export default class RaSearchPlugin extends Plugin {
 	raAuth!: AuthObject;
 	private ribbonEl: HTMLElement | null = null;
 	private autoImportAbort: AbortController | null = null;
+	private statusBarEl: HTMLElement | null = null;
 
 	async onload() {
 		registerRaIcon();
 		this.rootPath = this.app.vault.getRoot().path;
+		this.statusBarEl = this.addStatusBarItem();
 		await this.loadSettings();
-		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new RaSettingTab(this.app, this));
 		this.rebuildRaAuth();
 		this.toggleRibbonIcon();
+
+
 
 		// If a cover file is deleted, its `cover` frontmatter field must go with it.
 		// Otherwise the base renders a wikilink to a missing file and never falls back to
@@ -37,7 +40,6 @@ export default class RaSearchPlugin extends Plugin {
 			this.app.vault.on('delete', (file) => void this.onCoverDeleted(file)),
 		);
 
-		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
 			id: 'auto-import',
 			name: 'Auto import RA library',
@@ -77,7 +79,7 @@ export default class RaSearchPlugin extends Plugin {
 		});
 	}
 
-	isAutoImportRunning(): boolean {
+	isAutoImportRunning() {
 		return this.autoImportAbort !== null;
 	}
 
@@ -96,6 +98,13 @@ export default class RaSearchPlugin extends Plugin {
 		}
 	}
 
+	setImportProgress(text: string) {
+		this.statusBarEl?.setText(text);
+	}
+
+	clearImportStatus() {
+		this.statusBarEl?.setText("");
+	}
 	cancelAutoImport() {
 		if (!this.autoImportAbort) {
 			return false;
@@ -111,6 +120,8 @@ export default class RaSearchPlugin extends Plugin {
 			this.ribbonEl = this.addRibbonIcon(RA_LOGO_ICON_ID, "Add RA achievement set", (_evt: MouseEvent) => void this.handleRibbonClick());
 		}
 	}
+
+
 
 	async loadSettings() {
 		this.settings = Object.assign(

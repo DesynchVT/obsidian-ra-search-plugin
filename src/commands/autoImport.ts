@@ -22,6 +22,7 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 	}
 
 	try {
+		plugin.setImportProgress(`Preparing import..`);
 		const amountImported = await _autoImport(plugin, abortController.signal);
 		if (amountImported === 0) {
 			new Notice(`${plugin.manifest.name}: Nothing to import!`);
@@ -42,8 +43,8 @@ export const runAutoImport = async (plugin: RaSearchPlugin) => {
 		}
 	} finally {
 		plugin.finishAutoImport(abortController);
+		plugin.clearImportStatus();
 	}
-
 }
 
 const _autoImport = async (plugin: RaSearchPlugin, signal: AbortSignal) => {
@@ -62,6 +63,7 @@ const _autoImport = async (plugin: RaSearchPlugin, signal: AbortSignal) => {
 	new Notice(`${plugin.manifest.name}: Importing ${games.length} of ${initialAmount} sets`);
 
 	for (const [i, game] of games.entries()) {
+		plugin.setImportProgress(`Importing game ${i + 1} of ${games.length}`);
 		signal.throwIfAborted();
 		const [g] = await getGameBoxartUrl(plugin.raAuth, [game], signal);
 		signal.throwIfAborted();
