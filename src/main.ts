@@ -156,6 +156,10 @@ export default class RaSearchPlugin extends Plugin {
 		if (!(file instanceof TFile)) {
 			return;
 		}
+		const root = normalizePath(this.settings.raGamesPath);
+		if (!file.path.startsWith(`${root}/boxart/`)) {
+			return;
+		}
 		const match = file.path.match(/boxart\/(\d+)\.[a-z0-9]+$/i);
 		if (!match) {
 			return;
