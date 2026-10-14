@@ -10,9 +10,9 @@ import {
 	RaSettingTab,
 } from './settings';
 import { type AuthObject, buildAuthorization } from '@retroachievements/api';
-import { runAddGameById, runAutoImport, runCreateBase, runDownloadBoxArt } from './commands';
+import { runAddGameById, runAutoImport, runCreateBase, runDownloadBoxArt, runUpdateMasteryStatus } from './commands';
 import { RA_LOGO_ICON_ID, registerRaIcon } from './icons';
-import { gameIdFromSetUrl } from './utils';
+import { findNoteBySetUrl } from './utils';
 
 export default class RaSearchPlugin extends Plugin {
 	settings!: RaPluginSettings;
@@ -75,6 +75,14 @@ export default class RaSearchPlugin extends Plugin {
 					this.cancelAutoImport();
 				}
 				return true;
+			},
+		});
+
+		this.addCommand({
+			id: 'update-mastery-status',
+			name: 'Update mastery status',
+			callback: async () => {
+				await runUpdateMasteryStatus(this);
 			},
 		});
 	}
@@ -148,20 +156,6 @@ export default class RaSearchPlugin extends Plugin {
 		}
 	}
 
-	private findNoteBySetUrl(gameId: number): TFile | null {
-		const root = normalizePath(this.settings.raGamesPath);
-		for (const file of this.app.vault.getMarkdownFiles()) {
-			if (!file.path.startsWith(`${root}/`)) {
-				continue;
-			}
-			const fm = this.app.metadataCache.getCache(file.path)?.frontmatter;
-			const setUrl = typeof fm?.setUrl === "string" ? fm.setUrl : "";
-			if (gameIdFromSetUrl(setUrl) === gameId) {
-				return file;
-			}
-		}
-		return null;
-	}
 
 	private async onCoverDeleted(file: TAbstractFile) {
 		if (!(file instanceof TFile)) {
@@ -176,7 +170,7 @@ export default class RaSearchPlugin extends Plugin {
 			return;
 		}
 
-		const note = this.findNoteBySetUrl(Number(match[1]));
+		const note = findNoteBySetUrl(this, Number(match[1]));
 		if (!note) {
 			return;
 		}

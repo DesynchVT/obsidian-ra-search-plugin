@@ -13,7 +13,7 @@ export const toInternalLink = (s: string | string[]) => {
 	return s.length > 0 ? wrap(s) : "";
 }
 
-const wrap = (s: string) => `[[${s}]]`
+const wrap = (s: string) => `[[${s}]]`;
 
 const FILE_EXTENSIONS = [".md", ".base", ".png", ".jpg", ".jpeg"];
 
@@ -29,7 +29,7 @@ export const ensureFolderStructure = async (app: App, path: string) => {
 }
 
 export const noteExists = async (app: App, path: string) => {
-	let p = normalizePath(path)
+	let p = normalizePath(path);
 	const file = app.vault.getAbstractFileByPath(p);
 	if (file instanceof (TFile)) {
 		return file;
@@ -72,7 +72,7 @@ export const sanitizeGameTitle = (title: string) => {
 }
 
 /** Pull the game ID out of a note's setUrl, for notes that don't store a gameId. */
-export const gameIdFromSetUrl = (setUrl: string): number | undefined => {
+export const gameIdFromSetUrl = (setUrl: string) => {
 	const match = setUrl.match(/\/game\/(\d+)/);
 	return match ? Number(match[1]) : undefined;
 };
@@ -129,3 +129,17 @@ function createAbortError() {
 	return error;
 }
 
+export const findNoteBySetUrl = (plugin: RaSearchPlugin, gameId: number) => {
+	const root = normalizePath(plugin.settings.raGamesPath);
+	for (const file of plugin.app.vault.getMarkdownFiles()) {
+		if (!file.path.startsWith(`${root}/`)) {
+			continue;
+		}
+		const fm = plugin.app.metadataCache.getCache(file.path)?.frontmatter;
+		const setUrl = typeof fm?.setUrl === "string" ? fm.setUrl : "";
+		if (gameIdFromSetUrl(setUrl) === gameId) {
+			return file;
+		}
+	}
+	return null;
+}

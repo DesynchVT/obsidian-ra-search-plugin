@@ -3,3 +3,4 @@ export * from "./addGameById";
 export * from "./autoImport";
 export * from "./createBase";
 export * from "./downloadBoxArt";
+export * from "./updateMasteryStatus";
